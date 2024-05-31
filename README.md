@@ -1,3 +1,3 @@
 # NanoPayWebStore
 
-[Live Demo](https://mnpezz.github.io/NanoPayWebStore/index.html)
+[Live Demo](https://mnpezz.github.io/NanoPayWebStore/)
