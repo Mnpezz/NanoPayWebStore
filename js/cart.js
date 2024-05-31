@@ -144,12 +144,21 @@ function initiatePayment() {
         contact: false,
         shipping: false,
         currency: 'USD',
+        note: cartItems,
         line_items: cartItems,
-        success: (block) => {
+       success: (block) => {
             console.log("Payment successful!");
+            clearCart();
         },
         cancel: () => {
             console.log("Payment cancelled");
         }
     });
+}
+
+function clearCart() {
+    cart = []; // Clear the cart array
+    saveCart(); // Save the empty cart state
+    buildCartBody(); // Rebuild the cart body to reflect the empty state
+    reloadOrderTotal(); // Reload the order total to reflect the empty cart
 }
