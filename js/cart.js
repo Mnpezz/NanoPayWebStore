@@ -6,6 +6,7 @@ let cartBody = $("#cartTableBody");
 let totalItemsInCart = $("#totalItemsInCart");
 let txtCoupon = $("#txtCoupon");
 let appliedDiscount = 0;
+let orderHistoryBody = $("#orderHistoryBody");
 
 const discountCodes = {
     "sale50": 0.5,  // 50% discount
@@ -116,11 +117,6 @@ function changeParticularCartQuantity(index, quantity) {
     reloadOrderTotal();
 }
 
-$(function () {
-    reloadOrderTotal();
-    buildCartBody();
-});
-
 function initiatePayment() {
     const cartItems = cart.map(item => {
         let prod = getProductById(products, item.productId);
@@ -131,8 +127,10 @@ function initiatePayment() {
         let itemTotalPrice = discountedPrice * item.quantity;
         let itemTax = itemTotalPrice * taxRate;
         let totalPriceWithTax = itemTotalPrice + itemTax;
+
         return {
-            name: `${prod.name} (Color: ${selectedColor.name}, Size: ${selectedSize.name}, Qty: ${item.quantity})`,
+            name: `${prod.name} (Color: ${selectedColor.name}, Size: ${selectedSize.name})`,
+            quantity: item.quantity,
             price: totalPriceWithTax.toFixed(2)
         };
     });
@@ -144,10 +142,10 @@ function initiatePayment() {
         contact: false,
         shipping: false,
         currency: 'USD',
-        note: cartItems,
         line_items: cartItems,
-       success: (block) => {
+        success: (block) => {
             console.log("Payment successful!");
+            saveOrderHistory(cartItems);
             clearCart();
         },
         cancel: () => {
@@ -162,3 +160,40 @@ function clearCart() {
     buildCartBody(); // Rebuild the cart body to reflect the empty state
     reloadOrderTotal(); // Reload the order total to reflect the empty cart
 }
+
+function saveOrderHistory(cartItems) {
+    const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+    const newOrder = {
+        id: orderHistory.length + 1,
+        date: new Date().toLocaleString(),
+        items: cartItems,
+        total: cartItems.reduce((acc, item) => acc + parseFloat(item.price), 0).toFixed(2)
+    };
+    orderHistory.push(newOrder);
+    localStorage.setItem('orderHistory', JSON.stringify(orderHistory));
+    loadOrderHistory();
+}
+
+function loadOrderHistory() {
+    const orderHistory = JSON.parse(localStorage.getItem('orderHistory')) || [];
+    let str = '';
+    orderHistory.forEach(order => {
+        str += `
+            <tr>
+                <td>${order.id}</td>
+                <td>${order.date}</td>
+                <td>${order.items.map(item => `
+                    <p>${item.name} - ${item.quantity} x $${item.price}</p>
+                `).join('')}</td>
+                <td>$${order.total}</td>
+            </tr>
+        `;
+    });
+    orderHistoryBody.html(str);
+}
+
+$(function () {
+    reloadOrderTotal();
+    buildCartBody();
+    loadOrderHistory(); // Load order history on page load
+});
