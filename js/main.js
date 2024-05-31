@@ -114,7 +114,7 @@ function loadProducts() {
                 id: ++prodIds,
                 name: "Nor'easter Puffer Vest",
                 description: "There's warm, and then there's vineyard vines warm. We use the highest-quality, responsibly sourced, traceable and sustainable goose and duck down that is breathable, wicks moisture and holds up season after season.",
-                price:185.00,
+                price:0.18,
                 sizes,
                 colors,
                 images: [
@@ -130,7 +130,7 @@ function loadProducts() {
                 id: ++prodIds,
                 name: "Men's Blank Winstead Stripe Sankaty Performance Polo",
                 description: "Moisture-wicking, quick-drying fabric that's wrinkle resistant with UV protection. Performance fit for full range of motion. Short sleeves with a self-collar, open sleeves, and a split hem",
-                price:88.50,
+                price:1.25,
                 sizes,
                 colors,
                 images: [
@@ -147,7 +147,7 @@ function loadProducts() {
                 id: ++prodIds,
                 name: "Performance On-The-Go 5-Pocket Pants",
                 description: "Shep & Ian were sitting around one day and Ian was wearing performance pants. Shep started chirping Ian, telling him that he looked like he was about to slide out of his chair and he could hear him swishing around from a mile away. Ian shot back, barking at Shep that he was wearing the same khaki pants he wore to his eighth grade graduation. ",
-                price:125.00,
+                price:1.55,
                 sizes,
                 colors,
                 images: [
@@ -164,7 +164,7 @@ function loadProducts() {
                 id: ++prodIds,
                 name: "Burgee Whale Hoodie Long-Sleeve Pocket Tee",
                 description: "If you're looking for a great, lightweight fall layer, look no further. Our long-sleeve hoodie tees combine the signature soft cotton fabrication of our classic tees with a fun hoodie style.",
-                price:59.50,
+                price:0.01,
                 sizes,
                 colors,
                 images: [
@@ -181,7 +181,7 @@ function loadProducts() {
                 id: ++prodIds,
                 name: "Classic Fit Blackwatch Poplin Tucker Shirt",
                 description: "We have a button-down shirt for every occasion. Whether you're heading to the office or to a wedding, chilling in a tiki bar on the beach or just getting dressed for a date night on the town. Our button-downs strike the perfect balance of fit and style, with just the right amount of built-in stretch.",
-                price:98.50,
+                price:0.02,
                 sizes,
                 colors,
                 images: [
@@ -209,7 +209,7 @@ function loadProducts() {
                 id: ++prodIds,
                 name: "Watercolor Wildflowers Tassel Trim Scarf",
                 description: "Wrap yourself up in our warm wool tassel trim scarf–it's the chicest way to stay cozy all day long.",
-                price:88.00,
+                price:0.03,
                 sizes,
                 colors,
                 images: [
@@ -223,7 +223,7 @@ function loadProducts() {
                 id: ++prodIds,
                 name: "Scarf Tied Fringe Sunhat",
                 description: "Sheild yourself from the sun in our chic scarf tied sunhat.",
-                price:81.99,
+                price:0.05,
                 sizes,
                 colors,
                 images: [
@@ -237,7 +237,7 @@ function loadProducts() {
                 id: ++prodIds,
                 name: "Whale Dot Camo Popsocket",
                 description: "It's so sleek, you might forget it's there! Pop this on and go.",
-                price:14.50,
+                price:0.10,
                 sizes,
                 colors,
                 images: [
