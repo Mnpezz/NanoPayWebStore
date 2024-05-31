@@ -142,7 +142,6 @@ function initiatePayment() {
         contact: false,
         shipping: false,
         currency: 'USD',
-        note: cartItems,
         line_items: cartItems,
         success: (block) => {
             console.log("Payment successful!");
