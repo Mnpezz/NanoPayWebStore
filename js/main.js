@@ -1,7 +1,12 @@
+// Global variables
 let prodIds = 1;
 let sizeIds = 1;
 let colsIds = 1;
+let products = [];
+let cart = [];
+let cartCount = $("#cartCount");
 
+// Navbar loading
 function loadNavbar() {
     fetch('navbar.html')
         .then(response => response.text())
@@ -11,116 +16,45 @@ function loadNavbar() {
         .catch(error => console.error('Error loading navbar:', error));
 }
 
-// Call the function when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', loadNavbar);
 
-let imageUrls = [
-    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw2dfb39fb/images/2020/3O001051_410_LD_F.jpg?sw=344&sh=529&sm=cut',
-    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwfcb9afa1/images/2020/3W001233_5418_LD_F.jpg?sw=344&sh=529&sm=cut',
-    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw6af841b5/images/2020/3W001117_5489_LD_F.jpg?sw=344&sh=529&sm=cut',
-    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw1bb6cb20/images/2020/3L001038_5732_LD_F.jpg?sw=344&sh=529&sm=cut',
-    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwca256b24/images/2020/3O001056_056_LD_F.jpg?sw=344&sh=529&sm=cut',
-    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwfa98ed65/images/2020/3K1138_410_LD_F.jpg?sw=344&sh=529&sm=cut',
-    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw6d575bac/images/2020/3P001038_250_LD_F.jpg?sw=344&sh=529&sm=cut',
-    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw8baf31e8/images/2020/3V011415_459_LD_B.jpg?sw=344&sh=529&sm=cut',
-]
-
-let products = []
-let cart = []
-let colour = {
-    id: 0,
-    hash: "",
-    name: ""
-}
-let product = {
-    name: "",
-    price: "",
-    description: "",
-    colors: [],
-    sizes: [],
-    images: []
-}
-
-let cartCount = $("#cartCount")
-
+// Local storage functions
 function getItemFromStore(key) {
     return JSON.parse(localStorage.getItem(key));
 }
-
 
 function saveItemToStore(item, key) {
     localStorage.setItem(key, JSON.stringify(item));
 }
 
 function hasStoredData() {
-    return !!localStorage.getItem('loaded')
+    return !!localStorage.getItem('loaded');
 }
 
+// Product loading
 function loadProducts() {
-
     if (hasStoredData()) {
-
-        //Load all the products from the local storage
-        products = getItemFromStore('products')
+        products = getItemFromStore('products');
     } else {
+        // Initialize products with default data
         let sizes = [
-            {
-                id: ++sizeIds,
-                name: 'XS'
-            },
-            {
-                id: ++sizeIds,
-                name: '9'
-            },
-            {
-                id: ++sizeIds,
-                name: '11'
-            },
-            {
-                id: ++sizeIds,
-                name: 'L'
-            },
-            {
-                id: ++sizeIds,
-                name: 'XL'
-            },
-            {
-                id: ++sizeIds,
-                name: 'XXL'
-            },
+            { id: ++sizeIds, name: 'XS' },
+            { id: ++sizeIds, name: '9' },
+            { id: ++sizeIds, name: '11' },
+            { id: ++sizeIds, name: 'L' },
+            { id: ++sizeIds, name: 'XL' },
+            { id: ++sizeIds, name: 'XXL' },
         ];
-        let colors =  [
-            {
-                id: ++colsIds,
-                hash: "#D50000",
-                name: "Red",
-            },
-            {
-                id: ++colsIds,
-                hash: "#F50057",
-                name: "Pink",
-            },
-            {
-                id: ++colsIds,
-                hash: "#CDDC39",
-                name: "Lime",
-            },
-            {
-                id: ++colsIds,
-                hash: "#4CAF50",
-                name: "Green",
-            },
-            {
-                id: ++colsIds,
-                hash: "#FF9800",
-                name: "Orange",
-            },
-            {
-                id: ++colsIds,
-                hash: "#795548",
-                name: "Brown",
-            },
+        let colors = [
+            { id: ++colsIds, hash: "#D50000", name: "Red" },
+            { id: ++colsIds, hash: "#F50057", name: "Pink" },
+            { id: ++colsIds, hash: "#CDDC39", name: "Lime" },
+            { id: ++colsIds, hash: "#4CAF50", name: "Green" },
+            { id: ++colsIds, hash: "#FF9800", name: "Orange" },
+            { id: ++colsIds, hash: "#795548", name: "Brown" },
         ];
+        
+        // Add product data here (removed for brevity)
         let pds = [
             {
                 id: ++prodIds,
@@ -262,90 +196,84 @@ function loadProducts() {
                 name: "Whale Dot Camo Popsocket",
                 description: "It's so sleek, you might forget it's there! Pop this on and go.",
                 price:0.10,
-                sizes: null,
-                colors: null,
+                sizes,
+                colors,
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw4a6582cf/images/2020/5A001842_034_LD_F.jpg?sw=1184&sh=1410&sm=cut'
                 ]
 
             },
-
-        ]
-        saveItemToStore(pds, "products")
+        ];
+        
+        saveItemToStore(pds, "products");
     }
 }
 
+// Cart functions
 function loadCart() {
-    if (hasStoredData()) {
-        //Load all the carts from the local storage
-        cart = getItemFromStore('cart')
+    cart = hasStoredData() ? getItemFromStore('cart') : [];
+    saveItemToStore(cart, 'cart');
+}
+
+function updateCartCount() {
+    cartCount.html(cart.length);
+}
+
+function saveCart() {
+    saveItemToStore(cart, 'cart');
+}
+
+function pushItemToCart(item) {
+    let existingItem = cart.find(cItem => 
+        item.productId === cItem.productId && 
+        item.colorId === cItem.colorId && 
+        item.sizeId === cItem.sizeId
+    );
+
+    if (existingItem) {
+        existingItem.quantity += item.quantity;
     } else {
-        saveItemToStore(cart, 'cart')
-    }
-}
-
-function init() {
-    let fresh = hasStoredData()
-    loadProducts();
-    loadCart();
-    saveItemToStore(true, "loaded")
-    if (!fresh){
-        init()
+        cart.push(item);
     }
 
-}
-
-function generateProductUrl(product) {
-    let append = `?name=${product.name.replaceAll(' ', '-')}&id=${product.id}`
-    return "product.html" + append;
-}
-
-function getDataFromUrl(name) {
-    let params = (new URL(document.location)).searchParams;
-    return params.get(name);
-}
-
-function getProductById(pdsG, id) {
-    return pdsG.find(prod => {
-        return prod.id === parseInt(id);
-    })
-}
-function updateCartCount(){
-    cartCount.html(cart.length)
-}
-
-function saveCart(){
-    saveItemToStore(cart, 'cart')
-}
-
-function pushItemToCart(item){
-
-    // check if there is item with the same product, size and color increase the quantity instead
-    let cItem = cart.find(cItem=>{
-        return item.productId === cItem.productId && item.colorId === cItem.colorId && item.sizeId === cItem.sizeId
-    });
-    if(!!cItem){
-        let index = cart.indexOf(cItem)
-        cart[index].quantity += item.quantity
-    }else {
-        cart.push(item)
-    }
     saveCart();
-    updateCartCount()
+    updateCartCount();
 }
 
 function removeItemFromCart(index) {
-    cart.splice(index, 1)
+    cart.splice(index, 1);
     saveCart();
-    buildCartBody()
-    reloadOrderTotal()
-    updateCartCount()
+    buildCartBody();
+    reloadOrderTotal();
+    updateCartCount();
 }
 
-$(() => {
+// Utility functions
+function generateProductUrl(product) {
+    return `product.html?name=${product.name.replaceAll(' ', '-')}&id=${product.id}`;
+}
 
+function getDataFromUrl(name) {
+    return new URLSearchParams(window.location.search).get(name);
+}
+
+function getProductById(pdsG, id) {
+    return pdsG.find(prod => prod.id === parseInt(id));
+}
+
+// Initialization
+function init() {
+    let fresh = hasStoredData();
+    loadProducts();
+    loadCart();
+    saveItemToStore(true, "loaded");
+    if (!fresh) {
+        init();
+    }
+}
+
+// Document ready function
+$(function() {
     init();
-
-    updateCartCount()
-})
-
+    updateCartCount();
+});
