@@ -12,6 +12,7 @@ let selectedSize= $("#selectedSize");
 let qtyHolder = $("#qtyHolder")
 let addToCartBtn = $("#AddToCartBtn")
 
+
 function buildThumbNail(activeCar_t) {
     let product = getProductById(products, activeCar_t.productId)
     let str = '';
@@ -94,23 +95,34 @@ function buildDetail(activeCar_t) {
 
 }
 
-function buildQuantity(activeCar_t){
+function buildQuantity(activeCart) {
+    let product = getProductById(products, activeCart.productId);
+    let minQuantity = product.minQuantity || 1; // Default to 1 if not set
+    let maxQuantity = product.maxQuantity || 100; // Default to 100 if not set
 
-//    build Quantity
+    // Ensure initial quantity is at least the minimum quantity
+    if (activeCart.quantity < minQuantity) {
+        activeCart.quantity = minQuantity;
+    }
+
     let qty = "";
-    qty+= `
-            <button class="btn" onclick="changeQuantity(${activeCar_t.quantity-1})">&dArr;</button>
-            <input id="quantitySelector" onchange="changeQuantity(this.value)"  value="${activeCar_t.quantity}" type="number" class="disabled form-control w-25" width="20px">
-            <button class="btn" onclick="changeQuantity(${activeCar_t.quantity+1})">&uArr;</button>
-        
-    `
-    qtyHolder.html(qty)
+    qty += `
+        <button class="btn" onclick="changeQuantity(${activeCart.quantity - 1}, ${minQuantity}, ${maxQuantity})">&dArr;</button>
+        <input id="quantitySelector" onchange="changeQuantity(this.value, ${minQuantity}, ${maxQuantity})" value="${activeCart.quantity}" type="number" class="disabled form-control w-25" width="20px" min="${minQuantity}" max="${maxQuantity}">
+        <button class="btn" onclick="changeQuantity(${activeCart.quantity + 1}, ${minQuantity}, ${maxQuantity})">&uArr;</button>
+    `;
+    qtyHolder.html(qty);
 }
 
-function changeQuantity(amount){
-
-   activeCart.quantity = parseInt(amount) < 0 ? 0 : parseInt(amount);
-   buildQuantity(activeCart)
+function changeQuantity(amount, minQuantity, maxQuantity) {
+    amount = parseInt(amount);
+    if (amount < minQuantity) {
+        amount = minQuantity;
+    } else if (amount > maxQuantity) {
+        amount = maxQuantity;
+    }
+    activeCart.quantity = amount;
+    buildQuantity(activeCart);
 }
 
 
