@@ -2,6 +2,18 @@ let prodIds = 1;
 let sizeIds = 1;
 let colsIds = 1;
 
+function loadNavbar() {
+    fetch('navbar.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('navbar').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading navbar:', error));
+}
+
+// Call the function when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', loadNavbar);
+
 let imageUrls = [
     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw2dfb39fb/images/2020/3O001051_410_LD_F.jpg?sw=344&sh=529&sm=cut',
     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwfcb9afa1/images/2020/3W001233_5418_LD_F.jpg?sw=344&sh=529&sm=cut',
@@ -117,6 +129,8 @@ function loadProducts() {
                 price:0.18,
                 sizes,
                 colors,
+                minQuantity: 2,
+                maxQuantity: 5,
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwaba684ad/images/2020/1O001126_406_LD_F.jpg?sw=1680&sh=2000&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwf9af7222/images/2020/1O001126_406_OF_ED.jpg?sw=1184&sh=1410&sm=cut',
@@ -133,6 +147,8 @@ function loadProducts() {
                 price:1.25,
                 sizes,
                 colors,
+                minQuantity: 2,
+                maxQuantity: 50,
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw649937ba/images/2020/6K1381_484_LD_F.jpg?sw=1680&sh=2000&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw65b57cbd/images/2020/6K1381_002_LD_F.jpg?sw=1184&sh=1410&sm=cut',
@@ -150,6 +166,8 @@ function loadProducts() {
                 price:1.55,
                 sizes,
                 colors,
+                minQuantity: 10,
+                maxQuantity: 500,
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwd3bb0a74/images/2020/1P001052_250_LS_F.jpg?sw=1680&sh=2000&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw522f69f3/images/2020/1P001052_061_LD_F.jpg?sw=1184&sh=1410&sm=cut',
@@ -167,6 +185,8 @@ function loadProducts() {
                 price:0.01,
                 sizes,
                 colors,
+                minQuantity: 2,
+                maxQuantity: 5,
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw0563da3a/images/2020/1V013893_893_LD_B.jpg?sw=1680&sh=2000&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw24fbddf1/images/2020/1V013893_025_LD_B.jpg?sw=1184&sh=1410&sm=cut',
@@ -184,6 +204,8 @@ function loadProducts() {
                 price:0.02,
                 sizes,
                 colors,
+                minQuantity: 1,
+                maxQuantity: 12,
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwea216f90/images/2020/1W010788_6415_LD_F.jpg?sw=1680&sh=2000&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw96994bcb/images/2020/1W010788_6415_LD_D.jpg?sw=1184&sh=1410&sm=cut',
@@ -199,6 +221,8 @@ function loadProducts() {
                 price:17.99,
                 sizes,
                 colors,
+                minQuantity: 20,
+                maxQuantity: 500,
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw1e12804d/images/2020/8M001020_3784_LD_F.jpg?sw=1680&sh=2000&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw290a170e/images/2020/8M001020_3784_LD_B.jpg?sw=1184&sh=1410&sm=cut',
@@ -238,8 +262,8 @@ function loadProducts() {
                 name: "Whale Dot Camo Popsocket",
                 description: "It's so sleek, you might forget it's there! Pop this on and go.",
                 price:0.10,
-                sizes,
-                colors,
+                sizes: null,
+                colors: null,
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw4a6582cf/images/2020/5A001842_034_LD_F.jpg?sw=1184&sh=1410&sm=cut'
                 ]
