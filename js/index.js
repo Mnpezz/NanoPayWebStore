@@ -29,7 +29,7 @@ $(() => {
                 'box-shadow': '0 4px 8px rgba(0,0,0,0.1)',
                 'transform': 'translateY(-5px)'
             });
-            $(this).find('.product-image').css('transform', 'scale(1.05)');
+            $(this).find('.product-image').css('transform', 'scale(1.15)');
             $(this).find('.product-name').css('color', '#007bff');
         },
         // Mouse leave
