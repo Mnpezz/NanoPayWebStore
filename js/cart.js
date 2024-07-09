@@ -1,12 +1,13 @@
 let subTotalHolder = $("#subTotalHolder");
 let estimatedTotalHolder = $("#estimatedTotalHolder");
-let taxRate = 0.0945; // 9.45% sales tax
 let estimatedTaxHolder = $("#estimatedTaxHolder");
 let cartBody = $("#cartTableBody");
 let totalItemsInCart = $("#totalItemsInCart");
 let txtCoupon = $("#txtCoupon");
 let appliedDiscount = 0;
 let orderHistoryBody = $("#orderHistoryBody");
+
+let taxRate = 0.0945; // 9.45% sales tax
 
 const discountCodes = {
     "sale50": 0.5,  // 50% discount
@@ -40,8 +41,8 @@ function calculateTax(subTotal) {
 }
 
 function calculateEstimatedTotal(subTotal, tax) {
-    let total = subTotal - (subTotal * appliedDiscount) + tax;
-    return total;
+    let discountedSubTotal = subTotal * (1 - appliedDiscount);
+    return discountedSubTotal + tax;
 }
 
 function addCoupon() {
@@ -70,6 +71,13 @@ function buildCartBody() {
             let selectedColor = prod.colors.find(color => color.id === item.colorId);
             let selectedSize = prod.sizes.find(size => size.id === item.sizeId);
             let totalPrice = parseInt(item.quantity) * parseFloat(prod.price);
+            let minQuantity = prod.minQuantity || 1; // Default to 1 if not set
+            let maxQuantity = prod.maxQuantity || 100; // Default to 100 if not set
+
+            // Ensure initial quantity is at least the minimum quantity
+            if (item.quantity < minQuantity) {
+                item.quantity = minQuantity;
+            }
 
             str += `
                 <tr>
@@ -87,11 +95,11 @@ function buildCartBody() {
                     </td>
                     <td>
                         <div class="form-inline">
-                            <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index},${item.quantity - 1})">&dArr;</button>
-                            <input onchange="changeParticularCartQuantity(${index}, this.value)" min="0" type="number" class="form-control-sm form-control" style="width: 50px" value="${item.quantity}">
-                            <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index},${item.quantity + 1})">&uArr;</button>
+                            <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index}, ${item.quantity - 1}, ${minQuantity}, ${maxQuantity})">&dArr;</button>
+                            <input onchange="changeParticularCartQuantity(${index}, this.value, ${minQuantity}, ${maxQuantity})" min="${minQuantity}" max="${maxQuantity}" type="number" class="form-control-sm form-control" style="width: 50px" value="${item.quantity}">
+                            <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index}, ${item.quantity + 1}, ${minQuantity}, ${maxQuantity})">&uArr;</button>
                         </div>
-                        <p class="font-weight-bold">@ $${prod.price.toFixed(2)}</p>
+                        <p class="font-weight-bold">@ $${prod.price.toFixed(2)} each</p>
                     </td>
                     <td><span class="font-weight-bold">$${totalPrice.toFixed(2)}</span></td>
                 </tr>
@@ -108,39 +116,62 @@ function buildCartBody() {
         `;
     }
     cartBody.html(str);
-}
-
-function changeParticularCartQuantity(index, quantity) {
-    cart[index].quantity = parseInt(quantity) < 0 ? 0 : parseInt(quantity);
-    saveCart();
-    buildCartBody();
     reloadOrderTotal();
 }
 
+function changeParticularCartQuantity(index, amount, minQuantity, maxQuantity) {
+    amount = parseInt(amount);
+    if (amount < minQuantity) {
+        amount = minQuantity;
+    } else if (amount > maxQuantity) {
+        amount = maxQuantity;
+    }
+    cart[index].quantity = amount;
+    buildCartBody();
+    reloadOrderTotal(); // Add this line to update the totals
+}
+
 function initiatePayment() {
+    let subTotal = calculateSubTotal();
+    let discountedSubTotal = subTotal * (1 - appliedDiscount);
+    let tax = calculateTax(discountedSubTotal);
+    let total = discountedSubTotal + tax;
+
     const cartItems = cart.map(item => {
         let prod = getProductById(products, item.productId);
         let selectedColor = prod.colors.find(color => color.id === item.colorId);
         let selectedSize = prod.sizes.find(size => size.id === item.sizeId);
         let itemPrice = parseFloat(prod.price);
-        let discountedPrice = itemPrice * (1 - appliedDiscount);
-        let itemTotalPrice = discountedPrice * item.quantity;
-        let itemTax = itemTotalPrice * taxRate;
-        let totalPriceWithTax = itemTotalPrice + itemTax;
+        let itemTotal = itemPrice * item.quantity;
 
         return {
-            name: `${prod.name} (Color: ${selectedColor.name}, Size: ${selectedSize.name})`,
+            name: `${prod.name} (Price: $${itemPrice.toFixed(2)} each, Quanity: ${item.quantity}, Color: ${selectedColor.name}, Size: ${selectedSize.name})`,
             quantity: item.quantity,
-            price: totalPriceWithTax.toFixed(2)
+            price: itemPrice.toFixed(2)
         };
+    });
+
+    // Add discount and tax as separate line items
+    if (appliedDiscount > 0) {
+        cartItems.push({
+            name: `Discount: $${(-subTotal * appliedDiscount).toFixed(2)}`,
+            quantity: 1,
+            price: (-subTotal * appliedDiscount).toFixed(2)
+        });
+    }
+
+    cartItems.push({
+        name: `Tax: $${tax.toFixed(2)}`,
+        quantity: 1,
+        price: tax.toFixed(2)
     });
 
     NanoPay.open({
         title: "Payment",
-        address: '@mnpezz', //Recipient Address
-        notify: 'epxksjki@sharklasers.com', // Admin's email for notification
+        address: '@mnpezz',
+        notify: 'epxksjki@sharklasers.com',
         contact: false,
-        shipping: false,
+        shipping: 1,
         currency: 'USD',
         line_items: cartItems,
         success: (block) => {
