@@ -1,205 +1,169 @@
-let activeCart = {}
+// Global variables
+let activeCart = {};
+const elements = {
+    itemName: $("#itemName"),
+    itemDescription: $("#itemDescription"),
+    itemPrice: $("#itemPrice"),
+    thumbnailHolder: $("#thumbnailHolder"),
+    caroHolder: $("#caroInner"),
+    productColors: $("#itemColors"),
+    selectedColor: $("#selectedColor"),
+    productSizes: $("#productSizes"),
+    selectedSize: $("#selectedSize"),
+    qtyHolder: $("#qtyHolder"),
+    addToCartBtn: $("#AddToCartBtn")
+};
 
-let itemName = $("#itemName");
-let itemDescription = $("#itemDescription");
-let itemPrice = $("#itemPrice");
-let thumbnailHolder = $("#thumbnailHolder");
-let caroHolder = $("#caroInner");
-let productColors = $("#itemColors");
-let selectedColor = $("#selectedColor");
-let productSizes = $("#productSizes");
-let selectedSize= $("#selectedSize");
-let qtyHolder = $("#qtyHolder")
-let addToCartBtn = $("#AddToCartBtn")
-
-
-function buildThumbNail(activeCar_t) {
-    let product = getProductById(products, activeCar_t.productId)
-    let str = '';
-    let index = 0;
-    product.images.forEach(image => {
-
-        str += `
-        <img  src="${image}" onclick="changeActiveImage(${index})" class="img-thumbnail page-link p-1 m-1 ${activeCar_t.caroImgActive === index ? 'border border-primary':''}" alt="${product.name}"/>
-        `;
-        index++;
-    })
-    thumbnailHolder.html(str)
+// Product display functions
+function buildThumbNail(activeCart) {
+    const product = getProductById(products, activeCart.productId);
+    let str = product.images.map((image, index) => `
+        <img src="${image}" onclick="changeActiveImage(${index})" 
+             class="img-thumbnail page-link p-1 m-1 ${activeCart.caroImgActive === index ? 'border border-primary' : ''}" 
+             alt="${product.name}"/>
+    `).join('');
+    elements.thumbnailHolder.html(str);
 }
 
-function buildCaro(activeCar_t) {
-    let product = getProductById(products, activeCar_t.productId)
-    let str = '';
-    let index = 0;
-    product.images.forEach(image => {
-
-        str +=
-            `
-            <div class="carousel-item ${index === activeCar_t.caroImgActive ? 'active' : ''}">
-                <img src="${image}" class="d-block w-100" alt="${product.name}">
-            </div>
-            
-            `
-        index++;
-    })
-    caroHolder.html(str)
+function buildCaro(activeCart) {
+    const product = getProductById(products, activeCart.productId);
+    let str = product.images.map((image, index) => `
+        <div class="carousel-item ${index === activeCart.caroImgActive ? 'active' : ''}">
+            <img src="${image}" class="d-block w-100" alt="${product.name}">
+        </div>
+    `).join('');
+    elements.caroHolder.html(str);
 }
 
-function buildDetail(activeCar_t) {
-//    Name Title description
-    let product = getProductById(products, activeCar_t.productId)
-    itemName.html(product.name)
-    itemDescription.html(product.description)
-    itemPrice.html(product.price)
+function buildDetail(activeCart) {
+    const product = getProductById(products, activeCart.productId);
+    elements.itemName.html(product.name);
+    elements.itemDescription.html(product.description);
+    elements.itemPrice.html(product.price);
 
-//    build colors
-    let colors = "";
+    buildColors(product, activeCart);
+    buildSizes(product, activeCart);
+}
 
-    product.colors.forEach(color =>{
-        if (color.id === activeCar_t.colorId){
-            selectedColor.html(color.name)
-        }
-        else if (!!!activeCar_t.colorId){
-            selectedColor.html("Select Color")
-        }
+function buildColors(product, activeCart) {
+    elements.selectedColor.html(activeCart.colorId ? 
+        product.colors.find(c => c.id === activeCart.colorId).name : 
+        "Select Color");
 
-        colors += `
-         <button class="btn rounded-circle  ${color.id === activeCar_t.colorId ? 'border border-primary':''}" onclick="changeSelectedColor(${color.id})"
-               style="background-color: ${color.hash}; width: 40px; height: 40px">
-         </button>
-        
-        `
-    })
-    productColors.html(colors)
+    let colors = product.colors.map(color => `
+        <button class="btn rounded-circle ${color.id === activeCart.colorId ? 'border border-primary' : ''}" 
+                onclick="changeSelectedColor(${color.id})"
+                style="background-color: ${color.hash}; width: 40px; height: 40px">
+        </button>
+    `).join('');
+    elements.productColors.html(colors);
+}
 
-    // Build Sizes
-    let str = '';
-    product.sizes.forEach(size=>{
-        if (size.id === activeCar_t.sizeId){
-            selectedSize.html(size.name)
-        }
-        if (activeCar_t.sizeId === null){
-            selectedSize.html("Select Size")
-        }
+function buildSizes(product, activeCart) {
+    elements.selectedSize.html(activeCart.sizeId ? 
+        product.sizes.find(s => s.id === activeCart.sizeId).name : 
+        "Select Size");
 
-        str+= `
-            <button class="btn btn-info ${size.id === activeCar_t.sizeId ? 'active':''}"
-                    onclick="changeSelectedSize(${size.id})"
-             >${size.name}</button>
-                               
-        `
-    });
-    productSizes.html(str)
-
-
-
+    let sizes = product.sizes.map(size => `
+        <button class="btn btn-info ${size.id === activeCart.sizeId ? 'active' : ''}"
+                onclick="changeSelectedSize(${size.id})">
+            ${size.name}
+        </button>
+    `).join('');
+    elements.productSizes.html(sizes);
 }
 
 function buildQuantity(activeCart) {
-    let product = getProductById(products, activeCart.productId);
-    let minQuantity = product.minQuantity || 1; // Default to 1 if not set
-    let maxQuantity = product.maxQuantity || 100; // Default to 100 if not set
+    const product = getProductById(products, activeCart.productId);
+    const minQuantity = product.minQuantity || 1;
+    const maxQuantity = product.maxQuantity || 100;
 
-    // Ensure initial quantity is at least the minimum quantity
-    if (activeCart.quantity < minQuantity) {
-        activeCart.quantity = minQuantity;
-    }
+    activeCart.quantity = Math.max(minQuantity, activeCart.quantity);
 
-    let qty = "";
-    qty += `
+    let qty = `
         <button class="btn" onclick="changeQuantity(${activeCart.quantity - 1}, ${minQuantity}, ${maxQuantity})">&dArr;</button>
-        <input id="quantitySelector" onchange="changeQuantity(this.value, ${minQuantity}, ${maxQuantity})" value="${activeCart.quantity}" type="number" class="disabled form-control w-25" width="20px" min="${minQuantity}" max="${maxQuantity}">
+        <input id="quantitySelector" onchange="changeQuantity(this.value, ${minQuantity}, ${maxQuantity})" 
+               value="${activeCart.quantity}" type="number" class="disabled form-control w-25" 
+               min="${minQuantity}" max="${maxQuantity}">
         <button class="btn" onclick="changeQuantity(${activeCart.quantity + 1}, ${minQuantity}, ${maxQuantity})">&uArr;</button>
     `;
-    qtyHolder.html(qty);
+    elements.qtyHolder.html(qty);
 }
 
+// Event handler functions
 function changeQuantity(amount, minQuantity, maxQuantity) {
-    amount = parseInt(amount);
-    if (amount < minQuantity) {
-        amount = minQuantity;
-    } else if (amount > maxQuantity) {
-        amount = maxQuantity;
-    }
-    activeCart.quantity = amount;
+    activeCart.quantity = Math.min(Math.max(parseInt(amount), minQuantity), maxQuantity);
     buildQuantity(activeCart);
 }
 
-
-function changeSelectedColor(id){
-    productColors.tooltip('hide');
+function changeSelectedColor(id) {
+    elements.productColors.tooltip('hide');
     activeCart.colorId = id;
     buildDetail(activeCart);
 }
 
-function changeSelectedSize(id){
-    productSizes.tooltip('hide');
+function changeSelectedSize(id) {
+    elements.productSizes.tooltip('hide');
     activeCart.sizeId = id;
     buildDetail(activeCart);
 }
 
-function refreshProductPage() {
-    if (activeCart.productId) {
-        buildThumbNail(activeCart)
-        buildCaro(activeCart)
-        buildDetail(activeCart)
-        buildQuantity(activeCart)
-    }
-}
-
-function changeActiveImage(index){
+function changeActiveImage(index) {
     activeCart.caroImgActive = index;
     buildCaro(activeCart);
-    buildThumbNail(activeCart)
+    buildThumbNail(activeCart);
 }
 
-function addToCart(e){
-
-    // Check if color is selected
-    if (activeCart.colorId === null){
-        productColors.tooltip({
-            title:"Select Color!",
-            trigger:'manual',
-        });
-        productColors.tooltip('show');
+function addToCart(e) {
+    if (activeCart.colorId === null) {
+        showTooltip(elements.productColors, "Select Color!");
         e.preventDefault();
-        return
+        return;
     }
 
-    // Check if size is not null
-    if (activeCart.sizeId === null){
-        productSizes.tooltip({
-            title:"Select Size!",
-            trigger:'manual',
-        });
-        productSizes.tooltip('show');
+    if (activeCart.sizeId === null) {
+        showTooltip(elements.productSizes, "Select Size!");
         e.preventDefault();
-        return
+        return;
     }
 
-
-    pushItemToCart(activeCart)
+    pushItemToCart(activeCart);
 }
 
+function showTooltip(element, message) {
+    element.tooltip({
+        title: message,
+        trigger: 'manual',
+    }).tooltip('show');
+}
+
+// Page refresh function
+function refreshProductPage() {
+    if (activeCart.productId) {
+        buildThumbNail(activeCart);
+        buildCaro(activeCart);
+        buildDetail(activeCart);
+        buildQuantity(activeCart);
+    }
+}
+
+// Document ready function
 $(() => {
     let productId = getDataFromUrl("id");
 
-//    build active cart
     activeCart = {
         productId,
         quantity: 1,
         colorId: null,
         sizeId: null,
-        caroImgActive:0,
-    }
+        caroImgActive: 0,
+    };
 
-//    build the page base on active cart data
-    refreshProductPage()
+    refreshProductPage();
 
-    $('#productImagesCarousel').on('slid.bs.carousel',function (data){
-        changeActiveImage(data.to)
-    })
+    $('#productImagesCarousel').on('slid.bs.carousel', function(data) {
+        changeActiveImage(data.to);
+    });
 
-
-    addToCartBtn.click(addToCart)
+    elements.addToCartBtn.click(addToCart);
 });
