@@ -175,12 +175,12 @@ function initiatePayment() {
         currency: 'USD',
         line_items: cartItems,
         success: (block) => {
-            console.log("Payment successful!");
+            alert("Payment successful!");
             saveOrderHistory(cartItems);
             clearCart();
         },
         cancel: () => {
-            console.log("Payment cancelled");
+            alert("Payment cancelled");
         }
     });
 }
