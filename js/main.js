@@ -41,7 +41,42 @@ function loadProducts() {
             {
                 id: ++prodIds,
                 type: 'regular',
-                name: "Nor'easter Puffer Vest",
+                name: "Size only item",
+                description: "This item has no color option with a 5 minimum and 10 max..",
+                price: 0.02,
+                sizes: [
+                    { id: ++sizeIds, name: 'S' },
+                    { id: ++sizeIds, name: 'M' },
+                    { id: ++sizeIds, name: 'L' },
+                ],
+                minQuantity: 5,
+                maxQuantity: 10,
+                images: [
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw9a56142b/images/2020/1P001052_034_LD_D.jpg?sw=1680&sh=2000&sm=cut',
+                    // ... other images ...
+                ]
+            },
+            {
+                id: ++prodIds,
+                type: 'regular',
+                name: "Color only item",
+                description: "This item has no size option with a 2 minimum and 10 max..",
+                price: 0.02,
+                colors: [
+                    { id: ++colsIds, hash: "#D50000", name: "Red" },
+                    { id: ++colsIds, hash: "#4CAF50", name: "Green" },
+                ],
+                minQuantity: 2,
+                maxQuantity: 10,
+                images: [
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw9a56142b/images/2020/1P001052_034_LD_D.jpg?sw=1680&sh=2000&sm=cut',
+                    // ... other images ...
+                ]
+            },
+            {
+                id: ++prodIds,
+                type: 'regular',
+                name: "Both Color and Size",
                 description: "There's warm, and then there's vineyard vines warm...",
                 price: 0.02,
                 colors: [
@@ -60,24 +95,7 @@ function loadProducts() {
                     // ... other images ...
                 ]
             },
-            {
-                id: ++prodIds,
-                type: 'regular',
-                name: "No color",
-                description: "This item has no color option with a 5 minimum and 10 max..",
-                price: 0.02,
-                sizes: [
-                    { id: ++sizeIds, name: 'S' },
-                    { id: ++sizeIds, name: 'M' },
-                    { id: ++sizeIds, name: 'L' },
-                ],
-                minQuantity: 5,
-                maxQuantity: 10,
-                images: [
-                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw9a56142b/images/2020/1P001052_034_LD_D.jpg?sw=1680&sh=2000&sm=cut',
-                    // ... other images ...
-                ]
-            },
+            
             {
                 id: ++prodIds,
                 type: 'appointment',
