@@ -184,9 +184,9 @@ function initiatePayment() {
 
     NanoPay.open({
         address: '@mnpezz',
-        notify: 'mnpezz@gmail.com',
-        contact: false,
-        shipping: false,
+        notify: 'zzjoiqlo@sharklasers.com',
+        contact: true,
+        shipping: 1,
         currency: 'USD',
         line_items: cartItems,
         note: titleSummary,
