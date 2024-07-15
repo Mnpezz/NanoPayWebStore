@@ -41,8 +41,35 @@ function buildDetail(activeCart) {
     elements.itemDescription.html(product.description);
     elements.itemPrice.html(product.price);
 
-    buildColors(product, activeCart);
-    buildSizes(product, activeCart);
+    if (product.type === 'regular') {
+        if (product.colors) buildColors(product, activeCart);
+        if (product.sizes) buildSizes(product, activeCart);
+    } else if (product.type === 'appointment') {
+        buildAppointmentSelector(product, activeCart);
+    }
+}
+
+function buildAppointmentSelector(product, activeCart) {
+    let dateSelect = `<select id="appointmentDate" onchange="updateAppointmentDate(this.value)">
+        <option value="">Select Date</option>
+        ${product.availableDates.map(date => `<option value="${date}">${date}</option>`).join('')}
+    </select>`;
+
+    let timeSelect = `<select id="appointmentTime" onchange="updateAppointmentTime(this.value)">
+        <option value="">Select Time</option>
+        ${product.availableTimes.map(time => `<option value="${time}">${time}</option>`).join('')}
+    </select>`;
+
+    elements.productColors.html(dateSelect);
+    elements.productSizes.html(timeSelect);
+}
+
+function updateAppointmentDate(date) {
+    activeCart.appointmentDate = date;
+}
+
+function updateAppointmentTime(time) {
+    activeCart.appointmentTime = time;
 }
 
 function buildColors(product, activeCart) {
@@ -115,19 +142,58 @@ function changeActiveImage(index) {
 }
 
 function addToCart(e) {
-    if (activeCart.colorId === null) {
-        showTooltip(elements.productColors, "Select Color!");
-        e.preventDefault();
-        return;
+    const product = getProductById(products, activeCart.productId);
+
+    if (product.type === 'regular') {
+        if (product.colors && activeCart.colorId === null) {
+            showTooltip(elements.productColors, "Select Color!");
+            e.preventDefault();
+            return;
+        }
+
+        if (product.sizes && activeCart.sizeId === null) {
+            showTooltip(elements.productSizes, "Select Size!");
+            e.preventDefault();
+            return;
+        }
+    } else if (product.type === 'appointment') {
+        if (!activeCart.appointmentDate || !activeCart.appointmentTime) {
+            showTooltip(elements.productColors, "Select Date and Time!");
+            e.preventDefault();
+            return;
+        }
     }
 
-    if (activeCart.sizeId === null) {
-        showTooltip(elements.productSizes, "Select Size!");
-        e.preventDefault();
-        return;
-    }
+    // Create a new cart item
+    const newCartItem = {
+        productId: activeCart.productId,
+        quantity: activeCart.quantity,
+        colorId: activeCart.colorId,
+        sizeId: activeCart.sizeId,
+        appointmentDate: activeCart.appointmentDate,
+        appointmentTime: activeCart.appointmentTime
+    };
 
-    pushItemToCart(activeCart);
+    // Add the new item to the cart
+    cart.push(newCartItem);
+    saveCart();
+    updateCartCount();
+
+    // Reset activeCart for the next item
+    resetActiveCart();
+
+    alert("Item added to cart!");
+}
+
+function resetActiveCart() {
+    activeCart = {
+        productId: null,
+        quantity: 1,
+        colorId: null,
+        sizeId: null,
+        appointmentDate: null,
+        appointmentTime: null
+    };
 }
 
 function showTooltip(element, message) {
