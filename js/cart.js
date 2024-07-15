@@ -68,30 +68,32 @@ function buildCartBody() {
     if (cart.length > 0) {
         cart.forEach((item, index) => {
             let prod = getProductById(products, item.productId);
-            let selectedColor = prod.colors.find(color => color.id === item.colorId);
-            let selectedSize = prod.sizes.find(size => size.id === item.sizeId);
             let totalPrice = parseInt(item.quantity) * parseFloat(prod.price);
-            let minQuantity = prod.minQuantity || 1; // Default to 1 if not set
-            let maxQuantity = prod.maxQuantity || 100; // Default to 100 if not set
+            let minQuantity = prod.minQuantity || 1;
+            let maxQuantity = prod.maxQuantity || 100;
 
-            // Ensure initial quantity is at least the minimum quantity
-            if (item.quantity < minQuantity) {
-                item.quantity = minQuantity;
+            let itemDetails = '';
+            if (prod.type === 'regular') {
+                let selectedColor = prod.colors ? prod.colors.find(color => color.id === item.colorId) : null;
+                let selectedSize = prod.sizes ? prod.sizes.find(size => size.id === item.sizeId) : null;
+                itemDetails = `
+                    ${selectedColor ? `<span class="font-weight-bold">Color:</span> <span>${selectedColor.name}</span> | ` : ''}
+                    ${selectedSize ? `<span class="font-weight-bold">Size: </span><span>${selectedSize.name}</span> | ` : ''}
+                `;
+            } else if (prod.type === 'appointment') {
+                itemDetails = `
+                    <span class="font-weight-bold">Date:</span> <span>${item.appointmentDate}</span> | 
+                    <span class="font-weight-bold">Time: </span><span>${item.appointmentTime}</span> | 
+                `;
             }
 
             str += `
                 <tr>
                     <th scope="row">${counter}</th>
-                    <td><img width="60px" class="img-thumbnail" src="${prod.images[0]}" alt=""></td>
+                    <td><img width="60px" class="img-thumbnail" src="${prod.images[0]}" alt="${prod.name}"></td>
                     <td>
                         <p class="font-weight-bold"><a href="${generateProductUrl(prod)}">${prod.name}</a></p>
-                        <p>
-                            <span class="font-weight-bold">Color:</span> 
-                            <span>${selectedColor.name}</span> | 
-                            <span class="font-weight-bold">Size: </span>
-                            <span>${selectedSize.name}</span> | 
-                            <button onclick="removeItemFromCart(${index})" type="button" class="btn btn-link">remove</button>
-                        </p>
+                        <p>${itemDetails}<button onclick="removeItemFromCart(${index})" type="button" class="btn btn-link">remove</button></p>
                     </td>
                     <td>
                         <div class="form-inline">
@@ -127,8 +129,8 @@ function changeParticularCartQuantity(index, amount, minQuantity, maxQuantity) {
         amount = maxQuantity;
     }
     cart[index].quantity = amount;
+    saveCart();
     buildCartBody();
-    reloadOrderTotal(); // Add this line to update the totals
 }
 
 function initiatePayment() {
@@ -139,13 +141,20 @@ function initiatePayment() {
 
     const cartItems = cart.map(item => {
         let prod = getProductById(products, item.productId);
-        let selectedColor = prod.colors.find(color => color.id === item.colorId);
-        let selectedSize = prod.sizes.find(size => size.id === item.sizeId);
         let itemPrice = parseFloat(prod.price);
         let itemTotal = itemPrice * item.quantity;
-
+        
+        let itemDetails = '';
+        if (prod.type === 'regular') {
+            let selectedColor = prod.colors ? prod.colors.find(color => color.id === item.colorId) : null;
+            let selectedSize = prod.sizes ? prod.sizes.find(size => size.id === item.sizeId) : null;
+            itemDetails = `${selectedColor ? `Color: ${selectedColor.name}, ` : ''}${selectedSize ? `Size: ${selectedSize.name}` : ''}`;
+        } else if (prod.type === 'appointment') {
+            itemDetails = `Date: ${item.appointmentDate}, Time: ${item.appointmentTime}`;
+        }
+        
         return {
-            name: `${prod.name} (Price: $${itemPrice.toFixed(2)} each, Quanity: ${item.quantity}, Color: ${selectedColor.name}, Size: ${selectedSize.name})`,
+            name: `${prod.name}: ${item.quantity} <br> ${itemDetails} <br>`,
             quantity: item.quantity,
             price: itemPrice.toFixed(2)
         };
@@ -166,14 +175,21 @@ function initiatePayment() {
         price: tax.toFixed(2)
     });
 
+    let itemCount = cart.length;
+    let titleSummary = cartItems.map(item => item.name).join('<br>');
+    if (total <= 0) {
+        alert("Cannot process a payment of $0 or less.");
+        return;
+    }
+
     NanoPay.open({
-        title: "Payment",
         address: '@mnpezz',
-        notify: 'epxksjki@sharklasers.com',
+        notify: 'mnpezz@gmail.com',
         contact: false,
-        shipping: 1,
+        shipping: false,
         currency: 'USD',
         line_items: cartItems,
+        note: titleSummary,
         success: (block) => {
             alert("Payment successful!");
             saveOrderHistory(cartItems);
@@ -223,8 +239,14 @@ function loadOrderHistory() {
     orderHistoryBody.html(str);
 }
 
-$(function () {
-    reloadOrderTotal();
+function removeItemFromCart(index) {
+    cart.splice(index, 1);
+    saveCart();
     buildCartBody();
-    loadOrderHistory(); // Load order history on page load
+}
+
+$(function () {
+    buildCartBody();
+    reloadOrderTotal();
+    loadOrderHistory();
 });
