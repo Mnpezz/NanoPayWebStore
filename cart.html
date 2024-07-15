@@ -72,90 +72,64 @@
 <body>
     <div id="navbar"></div>
 
-<div class="container my-5" id="app">
-    <h4>My Cart</h4>
-    <div class="row">
-        <div class="col col-md-8">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Item</th>
-                    <th scope="col">Description</th>
-                    <th scope="col">QUANTITY & UNIT PRICE</th>
-                    <th scope="col">TOTAL PRICE</th>
-                </tr>
-                </thead>
-                <tbody id="cartTableBody">
-                <!--<tr>
-                    <th scope="row">1</th>
-                    <td>
-                        <img width="60px" class="img-thumbnail" src="https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw8294d4d0/images/2020/3K001154_252_LD_F.jpg?sw=102&sh=190&sm=cut" alt="">
-                    </td>
-                    <td>
-                        <p class="font-weight-bold"><a href="product.html">QUANTITY & UNIT PRICE</a></p>
-                        <p ><span class="font-weight-bold">Color:</span> <span>Red</span> | <span class="font-weight-bold">Size: </span><span>SSL</span></p>
-                    </td>
-                    <td class="text-center">
-                        <button class="btn">&dArr;</button>
-                        <label for=""></label>
-                        <input id="" min="0" type="number" class="" style="width: 50px">
-                        <button class="btn">&uArr;</button>
-                        <p class="font-weight-bold">@ $ 590</p>
-                    </td>
-
-                    <td><h5>$ 450</h5></td>
-                </tr>-->
-
-                </tbody>
-            </table>
-        </div>
-
-        <div class="col col-md-4">
-            <div class="card shadow position-sticky">
-                <div class="card-header bg-primary text-white">
-                    <h5>Order Total</h5>
-                    <p class="p-0 m-0"><span id="totalItemsInCart"></span>  Total</p>
-                </div>
-                <div class="card-body">
-                    <table class="table table-borderless">
+    <div class="container my-5">
+        <h2>Your Cart</h2>
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td><h6>Subtotal</h6></td>
-                            <td><h5>$ <span id="subTotalHolder"></span></h5></td>
+                            <th>#</th>
+                            <th>Image</th>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
                         </tr>
-                        <tr>
-                            <td><h6>Sale Tax</h6></td>
-                            <td><h5 >$  <span id="estimatedTaxHolder"></span></h5></td>
-                        </tr>
-                        <tr>
-                            <td><h6>Estimated Total</h6></td>
-                            <td><h5 >$ <span id="estimatedTotalHolder"></span></h5></td>
-                        </tr>
-                    </table>
-
-                    <div class="my-5">
-                        <h6>Add a coupon</h6>
-                        <div class="input-group">
-
-                            <label for="txtCoupon" class="sr-only">Password</label>
-                            <input type="password" class="form-control" id="txtCoupon" placeholder="code">
-                            <div class="input-group-prepend">
-                                <button onclick="addCoupon()" type="button" class="btn btn-primary mb-2">Add</button>
-                            </div>
-                            <div class="valid-feedback">
-                                Coupon Added
-                            </div>
-                            <div class="invalid-feedback">
-                                Invalid Coupon.
-                            </div>
+                    </thead>
+                    <tbody id="cartTableBody">
+                        <!-- Cart items will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Order Summary</h5>
+                        <p class="card-text">Items in cart: <span id="totalItemsInCart"></span></p>
+                        <p class="card-text">Subtotal: $<span id="subTotalHolder"></span></p>
+                        <p class="card-text">Estimated Tax: $<span id="estimatedTaxHolder"></span></p>
+                        <h5 class="card-text">Estimated Total: $<span id="estimatedTotalHolder"></span></h5>
+                        <div class="form-group">
+                            <label for="txtCoupon">Coupon Code:</label>
+                            <input type="text" class="form-control" id="txtCoupon">
+                            <button onclick="addCoupon()" class="btn btn-secondary mt-2">Apply Coupon</button>
                         </div>
+                        <button onclick="initiatePayment()" class="btn btn-primary btn-block">Proceed to Checkout</button>
                     </div>
-                    <a id="payButton" onclick="initiatePayment()" class="btn btn-primary btn-lg mt-5 mb-2 btn-block">Pay Now</a>
                 </div>
             </div>
         </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <h3>Order History</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Items</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderHistoryBody">
+                        <!-- Order history will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-</div>
+
 
 
 
