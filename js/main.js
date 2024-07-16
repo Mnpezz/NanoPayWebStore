@@ -12,6 +12,7 @@ function loadNavbar() {
         .then(response => response.text())
         .then(data => {
             document.getElementById('navbar').innerHTML = data;
+            loadCartCount(); // Add this line
         })
         .catch(error => console.error('Error loading navbar:', error));
 }
@@ -122,12 +123,24 @@ function loadCart() {
     saveItemToStore(cart, 'cart');
 }
 
+function loadCartCount() {
+    let itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+    cartCount.html(itemCount);
+    $('#navbarTotalItemsInCart').text(itemCount);
+}
+
 function updateCartCount() {
-    cartCount.html(cart.length);
+    let itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+    cartCount.html(itemCount);
+    // Update the navbar cart count
+    $('#navbarTotalItemsInCart').text(itemCount);
+    localStorage.setItem('cartCount', itemCount);
+
 }
 
 function saveCart() {
     saveItemToStore(cart, 'cart');
+    updateCartCount();
 }
 
 function pushItemToCart(item) {
@@ -168,11 +181,11 @@ function getProductById(pdsG, id) {
     return pdsG.find(prod => prod.id === parseInt(id));
 }
 
-// Initialization
 function init() {
     let fresh = hasStoredData();
     loadProducts();
     loadCart();
+    loadCartCount();
     saveItemToStore(true, "loaded");
     if (!fresh) {
         init();
@@ -182,5 +195,4 @@ function init() {
 // Document ready function
 $(function() {
     init();
-    updateCartCount();
 });
