@@ -57,15 +57,25 @@
             display: none;
         }
 
-        footer {
-            background-color: #343a40;
-            color: #fff;
+        .article-preview {
+            max-width: 600px;
             padding: 20px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
-        footer a {
-            color: #ffc107;
+        .article-preview h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .article-preview p {
+            color: #666;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -73,22 +83,26 @@
 
     <div id="navbar"></div>
 
-    
-        <div id="app" class="containerWall">
-            <article class="premium">
-                <div class="row">
-                    <div class="col">
-                        <div class="card shadow">
-                            <div class="card-body">
-                                <h5>Thank you for reading our paid blog.</h5>
-                            </div>
+    <div id="app" class="containerWall">
+        <div class="article-preview">
+            <h2>Exciting Article Title</h2>
+            <p>This is a brief preview of the exciting content you'll find in our premium article. Unlock now to read the full story and gain valuable insights!</p>
+        </div>
+        <article class="premium">
+            <div class="row">
+                <div class="col">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5>Thank you for reading our paid blog.</h5>
                         </div>
                     </div>
                 </div>
+            </div>
         </article>
-        </div>
+    </div>
 
-<div id="footer"></div>
+    <div id="footer"></div>
+
 
 <script src="https://pay.nano.to/latest.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
