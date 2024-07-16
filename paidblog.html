@@ -28,7 +28,15 @@
     
     <title>WebStore!</title>
     <style>
-            .containerWall {
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .containerWall {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -36,7 +44,7 @@
             font-family: Arial, sans-serif;
         }
 
-            .premium {
+        .premium {
             max-width: 600px;
             padding: 20px;
             margin: 20px;
@@ -49,7 +57,16 @@
             display: none;
         }
 
-    
+        footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #ffc107;
+        }
     </style>
 </head>
 <body>
@@ -57,7 +74,7 @@
     <div id="navbar"></div>
 
     
-        <div id="app" class="containerWall">
+        <div id="app" class="container containerWall">
             <article class="premium">
                 <div class="row">
                     <div class="col">
