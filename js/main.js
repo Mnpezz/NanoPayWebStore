@@ -118,8 +118,8 @@ function loadProducts() {
                 name: "Consultation Session",
                 description: "Book a consultation session with our experts.",
                 price: 0.01,
-                availableDates: ["2024-07-16", "2024-07-17", "2024-07-18"],
-                availableTimes: ["09:00", "11:00", "14:00", "16:00"],
+                availableDates: ["2024-07-16", "July 17, 2024", "07/18/2024"],
+                availableTimes: ["09:00 AM", "11 AM", "1:00 PM", "15:00"],
                 minQuantity: 1,
                 maxQuantity: 1,
                 images: [
