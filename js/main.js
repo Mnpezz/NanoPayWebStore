@@ -6,6 +6,7 @@ let products = [];
 let cart = [];
 let cartCount = $("#cartCount");
 
+
 // Navbar loading
 function loadNavbar() {
     fetch('navbar.html')
@@ -17,7 +18,21 @@ function loadNavbar() {
         .catch(error => console.error('Error loading navbar:', error));
 }
 
-document.addEventListener('DOMContentLoaded', loadNavbar);
+// Footer loading
+function loadFooter() {
+    fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer').innerHTML = data;
+        })
+        .catch(error => console.error('Error loading footer:', error));
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadNavbar(); // If you have this
+    loadFooter(); // Add this line
+    // ... other initialization code ...
+});
 
 // Local storage functions
 function getItemFromStore(key) {
