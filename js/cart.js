@@ -119,6 +119,7 @@ function buildCartBody() {
     }
     cartBody.html(str);
     reloadOrderTotal();
+    updateCartCount();
 }
 
 function changeParticularCartQuantity(index, amount, minQuantity, maxQuantity) {
@@ -184,9 +185,9 @@ function initiatePayment() {
 
     NanoPay.open({
         address: '@mnpezz',
-        notify: 'zzjoiqlo@sharklasers.com',
-        contact: true,
-        shipping: 1,
+        notify: 'mnpezz@gmail.com',
+        contact: false,
+        shipping: false,
         currency: 'USD',
         line_items: cartItems,
         note: titleSummary,
@@ -202,10 +203,11 @@ function initiatePayment() {
 }
 
 function clearCart() {
-    cart = []; // Clear the cart array
-    saveCart(); // Save the empty cart state
-    buildCartBody(); // Rebuild the cart body to reflect the empty state
-    reloadOrderTotal(); // Reload the order total to reflect the empty cart
+    cart = [];
+    saveCart();
+    buildCartBody();
+    reloadOrderTotal();
+    updateCartCount();
 }
 
 function saveOrderHistory(cartItems) {
@@ -243,10 +245,12 @@ function removeItemFromCart(index) {
     cart.splice(index, 1);
     saveCart();
     buildCartBody();
+    updateCartCount();
 }
 
 $(function () {
     buildCartBody();
     reloadOrderTotal();
     loadOrderHistory();
+    loadCartCount(); // Add this line
 });
