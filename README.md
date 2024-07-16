@@ -44,21 +44,89 @@ nanopay.open({
 
 ### 2. Product Catalog (main.js)
 
-In `main.js`, starting from line 58, you should modify the product items to reflect your inventory:
+In `main.js`, starting from line 58, you should modify the product items to reflect your inventory.
 
+## Product Types and Item Details
+
+Our WebStore supports two main product types, each with its own set of attributes and options:
+
+### 2.1. Regular Items
+
+Regular items represent physical products or digital goods. They have the following attributes:
+
+- `id`: Unique identifier for the product
+- `type`: Set to 'regular' for these items
+- `name`: The product name
+- `description`: A detailed description of the product
+- `price`: The base price of the product
+- `images`: An array of image URLs for the product
+- `minQuantity`: Minimum quantity that can be ordered (default: 1)
+- `maxQuantity`: Maximum quantity that can be ordered
+
+Optional attributes:
+- `colors`: An array of color options, each with:
+  - `id`: Unique identifier for the color
+  - `name`: Color name
+  - `hash`: Color hex code
+- `sizes`: An array of size options, each with:
+  - `id`: Unique identifier for the size
+  - `name`: Size name (e.g., 'S', 'M', 'L')
+
+Example of a regular item:
 ```javascript
-let pds = [
-    {
-        id: ++prodIds,
-        type: 'regular',
-        name: "Your Product Name",
-        description: "Your product description...",
-        price: 0.02,
-        // ... other product details ...
-    },
-    // Add more products as needed
-];
+{
+    id: 1,
+    type: 'regular',
+    name: "Colorful T-Shirt",
+    description: "A comfortable, high-quality t-shirt available in multiple colors and sizes.",
+    price: 19.99,
+    colors: [
+        { id: 1, name: "Red", hash: "#FF0000" },
+        { id: 2, name: "Blue", hash: "#0000FF" }
+    ],
+    sizes: [
+        { id: 1, name: 'S' },
+        { id: 2, name: 'M' },
+        { id: 3, name: 'L' }
+    ],
+    minQuantity: 1,
+    maxQuantity: 10,
+    images: ['url_to_image_1.jpg', 'url_to_image_2.jpg']
+}
 ```
+
+### 2.2. Consulting Items
+
+Consulting items represent service-based products, typically used for booking consultation sessions. They have the following attributes:
+
+- `id`: Unique identifier for the service
+- `type`: Set to 'appointment' for these items
+- `name`: The name of the consultation service
+- `description`: A detailed description of the service
+- `price`: The price per consultation session
+- `availableDates`: An array of available dates for booking
+- `availableTimes`: An array of available time slots
+- `minQuantity`: Always set to 1 for appointment items
+- `maxQuantity`: Always set to 1 for appointment items
+- `images`: An array of image URLs related to the service
+
+Example of a consulting item:
+```javascript
+{
+    id: 2,
+    type: 'appointment',
+    name: "Personal Styling Consultation",
+    description: "A one-on-one session with our expert stylist to help you refine your personal style.",
+    price: 49.99,
+    availableDates: ["2024-07-16", "2024-07-17", "2024-07-18"],
+    availableTimes: ["09:00", "11:00", "14:00", "16:00"],
+    minQuantity: 1,
+    maxQuantity: 1,
+    images: ['url_to_stylist_image.jpg']
+}
+```
+
+When adding or modifying products in `main.js`, ensure that you provide all the necessary attributes for each product type. This structure allows for flexible product configurations while maintaining consistency across the store.
 
 ### 3. Paid Blog Configuration
 
