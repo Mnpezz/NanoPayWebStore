@@ -28,7 +28,15 @@
     <meta name="theme-color" content="#ffffff">
     <title>WebStore!</title>
     <style>
-         .containerWall {
+        html, body {
+            height: 100%;
+            margin: 20;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .containerWall {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -38,25 +46,34 @@
         }
 
         .card-body {
-        max-width: 600px;
-        padding: 20px;
-        margin: 20px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        background-color: #fff;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        line-height: 1.6;
-        text-align: center;
-    }
+            max-width: 600px;
+            padding: 20px;
+            margin: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+            text-align: center;
+        }
 
+        footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
 
-</style>
+        footer a {
+            color: #ffc107;
+        }
+    </style>
 </head>
 <body>
     <div id="navbar"></div>
 
 
-<div id="app" class="containerWall">
+<div id="app" class="container containerWall">
     <div class="row">
         <div class="col">
             <div class="card shadow">
