@@ -6,6 +6,10 @@ let totalItemsInCart = $("#totalItemsInCart");
 let txtCoupon = $("#txtCoupon");
 let appliedDiscount = 0;
 let orderHistoryBody = $("#orderHistoryBody");
+// Add these global variables at the top of the file
+let wishlistBody = $("#wishlistBody");
+let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
 
 let taxRate = 0.0945; // 9.45% sales tax
 
@@ -248,9 +252,76 @@ function removeItemFromCart(index) {
     updateCartCount();
 }
 
+// Add this function to load and display the wishlist
+function loadWishlist() {
+    let str = '';
+    if (wishlist.length > 0) {
+        wishlist.forEach((productId, index) => {
+            let prod = getProductById(products, productId);
+            str += `
+                <tr>
+                    <td><img width="60px" class="img-thumbnail" src="${prod.images[0]}" alt="${prod.name}"></td>
+                    <td>
+                        <p class="font-weight-bold"><a href="${generateProductUrl(prod)}">${prod.name}</a></p>
+                    </td>
+                    <td>$${prod.price.toFixed(2)}</td>
+                    <td>
+                        <button onclick="addToCartFromWishlist(${index})" class="btn btn-primary btn-sm">Add to Cart</button>
+                        <button onclick="removeFromWishlist(${index})" class="btn btn-danger btn-sm">Remove</button>
+                    </td>
+                </tr>
+            `;
+        });
+    } else {
+        str = `
+            <tr>
+                <td colspan="4">
+                    <h4>Your Wishlist is empty <a href="index.html">Find products here</a></h4>
+                </td>
+            </tr>
+        `;
+    }
+    wishlistBody.html(str);
+}
+
+// Function to add an item from wishlist to cart
+function addToCartFromWishlist(index) {
+    const productId = wishlist[index];
+    const product = getProductById(products, productId);
+    
+    // Create a new cart item (you may need to adjust this based on your product structure)
+    const newCartItem = {
+        productId: productId,
+        quantity: 1,
+        colorId: product.colors ? product.colors[0].id : null,
+        sizeId: product.sizes ? product.sizes[0].id : null
+    };
+
+    // Add to cart
+    cart.push(newCartItem);
+    saveCart();
+    
+    // Remove from wishlist
+    removeFromWishlist(index);
+    
+    // Update UI
+    buildCartBody();
+    loadWishlist();
+    alert("Item added to cart!");
+}
+
+// Function to remove an item from wishlist
+function removeFromWishlist(index) {
+    wishlist.splice(index, 1);
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    loadWishlist();
+}
+
+// Update the document ready function to include loadWishlist
 $(function () {
     buildCartBody();
     reloadOrderTotal();
     loadOrderHistory();
-    loadCartCount(); // Add this line
+    loadWishlist();  // Add this line
+    loadCartCount();
 });
