@@ -53,7 +53,7 @@ function buildAppointmentSelector(product, activeCart) {
     const dateInput = `
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">Select Date</span>
+                <span class="input-group-text" id="basic-addon1">Date:</span>
             </div>
             <input type="text" id="appointmentDate" class="custom-select form-control date-input" placeholder="Select Date">
         </div>
@@ -61,7 +61,7 @@ function buildAppointmentSelector(product, activeCart) {
     const timeSelect = `
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <label class="input-group-text" for="appointmentTime">Select Time</label>
+                <label class="input-group-text" for="appointmentTime">Time:</label>
             </div>
             <select id="appointmentTime" class="custom-select form-control" onchange="updateAppointmentTime(this.value)">
                 <option value="" selected>Select Time</option>
