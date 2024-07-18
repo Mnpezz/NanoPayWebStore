@@ -143,7 +143,7 @@ Exclusive items represent products or special offers that are only accessible af
 - 'images': An array of image URLs for the product
 - 'minQuantity': Minimum quantity that can be ordered (default: 1)
 - 'maxQuantity': Maximum quantity that can be ordered
-- 'unlockPrice': The price it will cost to unlock the product 
+- 'unlockPrice': The price it will cost to unlock additional photos, reveal alternative description, and the ability to add the product to your cart.
 
 Example of an exclusive item:
 ```javascript
@@ -162,12 +162,23 @@ Example of an exclusive item:
 ```
 
 Handling Exclusive Items in Code
+
+the default photo has a blur effect placed over it by default. it can be adjusted in the index.html for front page blur and the product.html for the product view:
+
+``` javascript
+<style>
+.blurred {
+    filter: blur(5px);
+}
+</style>
+```
+
 When adding or modifying exclusive products in main.js, ensure you provide all the necessary attributes. The structure should handle the locking and unlocking mechanism, displaying the sample description and images before the purchase and the full content after the purchase.
 
 Key Points for Exclusive Items
-Initial State: Before the product is unlocked, only the sample description and the first image (blurred) are shown.
+Initial State: Before the product is unlocked, only the sample description and the first image (blurred by default) are shown.
 Unlocking: After the payment, the full description and all images (unblurred) are shown.
-Blurred Effect: Use CSS to blur the initial image to give a preview without revealing the full content.
+Blurred Effect: Use CSS to blur the initial image to give a preview without revealing the full content in the index.html and the product.html.
 
 Configuration
 Update NanoPay unlockProduct for Exclusive Items in product.js:
