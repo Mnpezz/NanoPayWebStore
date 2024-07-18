@@ -299,7 +299,7 @@ function loadRelatedProducts(productId) {
     const relatedProducts = products
         .filter(p => p.id !== parseInt(productId))
         .sort(() => 0.5 - Math.random())
-        .slice(0, 3);
+        .slice(0, 4);
 
     const productsHtml = relatedProducts.map(product => `
         <div class="col-6 col-md-4">
