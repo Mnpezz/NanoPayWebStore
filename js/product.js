@@ -17,37 +17,85 @@ const elements = {
 // Product display functions
 function buildThumbNail(activeCart) {
     const product = getProductById(products, activeCart.productId);
+    const isExclusive = product.type === 'exclusive';
+    const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
+
     const thumbnails = product.images.map((image, index) => `
-        <img src="${image}" onclick="changeActiveImage(${index})" 
-             class="img-thumbnail page-link p-1 m-1 ${activeCart.caroImgActive === index ? 'border border-primary' : ''}" 
-             alt="${product.name}"/>
+        <img src="${image}" onclick="changeActiveImage(${index})"
+             class="img-thumbnail page-link p-1 m-1 ${activeCart.caroImgActive === index ? 'border border-primary' : ''} ${isExclusive && !isUnlocked && index === 0 ? 'blurred' : ''}"
+             alt="${product.name}" ${isExclusive && !isUnlocked && index > 0 ? 'style="display:none;"' : ''} />
     `).join('');
     elements.thumbnailHolder.html(thumbnails);
 }
 
+
+
+
 function buildCaro(activeCart) {
     const product = getProductById(products, activeCart.productId);
-    const carouselItems = product.images.map((image, index) => `
-        <div class="carousel-item ${index === activeCart.caroImgActive ? 'active' : ''}">
-            <img src="${image}" class="d-block w-100" alt="${product.name}">
+    const isExclusive = product.type === 'exclusive';
+    const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
+
+    let imagesToShow = isExclusive && !isUnlocked ? product.images.slice(0, 1) : product.images;
+
+    const carouselItems = imagesToShow.map((image, index) => `
+        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+            <img src="${image}" class="d-block w-100 ${isExclusive && !isUnlocked && index === 0 ? 'blurred' : ''}" alt="${product.name}">
         </div>
     `).join('');
+
     elements.caroHolder.html(carouselItems);
+
+    // Reinitialize the carousel after updating it
+    if ($('.carousel').length) {
+        $('.carousel').carousel('dispose'); // Dispose of the existing carousel
+        $('.carousel').carousel(); // Reinitialize the carousel
+    }
 }
+
+
 
 function buildDetail(activeCart) {
     const product = getProductById(products, activeCart.productId);
-    elements.itemName.html(product.name);
-    elements.itemDescription.html(product.description);
-    elements.itemPrice.html(product.price);
+    const isExclusive = product.type === 'exclusive';
+    const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
 
-    if (product.type === 'regular') {
+    elements.itemName.html(product.name);
+
+    if (isExclusive) {
+        if (isUnlocked) {
+            elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+            buildCaro(activeCart); // Show unblurred images
+            elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart).show();
+            elements.itemDescription.html(product.fullDescription || product.description); // Show full description
+        } else {
+            elements.itemPrice.html(`Unlock for $${product.unlockPrice.toFixed(2)}`);
+            buildCaro(activeCart); // Show blurred images
+            elements.addToCartBtn.hide();
+            elements.addToCartBtn.after(`
+                <button id="unlockProductBtn" class="btn btn-primary btn-block btn-lg mt-3">Unlock Product</button>
+                <div id="nanoPayContainer"></div>
+            `);
+            setupNanoPay(product);
+            $('#unlockProductBtn').on('click', function(e) {
+                e.preventDefault();
+                unlockProduct(product);
+            });
+            elements.itemDescription.html(product.description); // Show sample description
+        }
+        elements.productColors.hide();
+        elements.productSizes.hide();
+    } else {
+        elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+        buildCaro(activeCart);
         if (product.colors) buildColors(product, activeCart);
         if (product.sizes) buildSizes(product, activeCart);
-    } else if (product.type === 'appointment') {
-        buildAppointmentSelector(product, activeCart);
+        elements.itemDescription.html(product.description); // Show regular description
+        elements.addToCartBtn.show();
     }
 }
+
+
 
 function buildAppointmentSelector(product, activeCart) {
     const dateInput = `
@@ -160,7 +208,10 @@ function changeActiveImage(index) {
     activeCart.caroImgActive = index;
     buildCaro(activeCart);
     buildThumbNail(activeCart);
+
+    $('#productImagesCarousel').carousel(index); // Update the carousel to the clicked thumbnail
 }
+
 
 function addToCart(e) {
     const product = getProductById(products, activeCart.productId);
@@ -331,13 +382,98 @@ function loadRelatedProducts(productId) {
     $('#relatedProductsContainer').html(productsHtml);
 }
 
+function buildDetail(activeCart) {
+    const product = getProductById(products, activeCart.productId);
+    const isExclusive = product.type === 'exclusive';
+    const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
+
+    elements.itemName.html(product.name);
+    elements.itemDescription.html(product.description);
+
+    if (isExclusive) {
+        if (isUnlocked) {
+            elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+            buildCaro(activeCart, 1); // Show unblurred image (index 1)
+            elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart);
+        } else {
+            elements.itemPrice.html(`Unlock for $${product.unlockPrice.toFixed(2)}`);
+            buildCaro(activeCart, 0); // Show blurred image (index 0)
+            elements.addToCartBtn.text('Unlock Product').off('click').on('click', function(e) {
+                e.preventDefault();
+                unlockProduct(product);
+            });
+        }
+        elements.productColors.hide();
+        elements.productSizes.hide();
+    } else {
+        elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+        buildCaro(activeCart);
+        if (product.colors) buildColors(product, activeCart);
+        if (product.sizes) buildSizes(product, activeCart);
+        elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart);
+    }
+}
+
+function unlockProduct(product) {
+    NanoPay.open({
+        address: '@mnpezz',
+        notify: 'mnpezz@gmail.com',
+        contact: false,
+        shipping: false,
+        currency: 'USD',
+        line_items: [{
+            name: 'Unlock ' + product.name,
+            quantity: 1,
+            price: product.unlockPrice.toString()
+        }],
+        success: function(block) {
+            revealProduct(product);
+        },
+        cancel: function() {
+            alert("Payment cancelled. Product remains locked.");
+        }
+    });
+}
+
+function revealProduct(product) {
+    sessionStorage.setItem(`unlocked_${product.id}`, 'true');
+    elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+    elements.itemDescription.html(product.fullDescription || product.description); // Update the description
+
+    activeCart.caroImgActive = 0; // Reset the active image index
+    buildCaro(activeCart); // Show all images
+    buildThumbNail(activeCart); // Update thumbnails
+
+    // Reinitialize the carousel after updating it
+    if ($('.carousel').length) {
+        $('.carousel').carousel('dispose'); // Dispose of the existing carousel
+        $('.carousel').carousel(); // Reinitialize the carousel
+    }
+
+    elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart).show();
+}
+
+
+
 // Initialization on page load
 $(function() {
     const productId = getDataFromUrl("id");
 
-    // Load the current product details
+    activeCart = {
+        productId,
+        quantity: 1,
+        colorId: null,
+        sizeId: null,
+        caroImgActive: 0,
+    };
+
     refreshProductPage();
 
+    const product = getProductById(products, productId);
+    if (product.type === 'exclusive' && sessionStorage.getItem(`unlocked_${product.id}`) === 'true') {
+        revealProduct(product);
+    }
+    
     // Load reviews for the current product
     loadReviews(activeCart.productId);
 
