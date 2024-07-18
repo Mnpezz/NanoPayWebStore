@@ -1,4 +1,3 @@
-
 // Global variables
 let activeCart = {};
 const elements = {
@@ -18,22 +17,22 @@ const elements = {
 // Product display functions
 function buildThumbNail(activeCart) {
     const product = getProductById(products, activeCart.productId);
-    let str = product.images.map((image, index) => `
+    const thumbnails = product.images.map((image, index) => `
         <img src="${image}" onclick="changeActiveImage(${index})" 
              class="img-thumbnail page-link p-1 m-1 ${activeCart.caroImgActive === index ? 'border border-primary' : ''}" 
              alt="${product.name}"/>
     `).join('');
-    elements.thumbnailHolder.html(str);
+    elements.thumbnailHolder.html(thumbnails);
 }
 
 function buildCaro(activeCart) {
     const product = getProductById(products, activeCart.productId);
-    let str = product.images.map((image, index) => `
+    const carouselItems = product.images.map((image, index) => `
         <div class="carousel-item ${index === activeCart.caroImgActive ? 'active' : ''}">
             <img src="${image}" class="d-block w-100" alt="${product.name}">
         </div>
     `).join('');
-    elements.caroHolder.html(str);
+    elements.caroHolder.html(carouselItems);
 }
 
 function buildDetail(activeCart) {
@@ -51,11 +50,25 @@ function buildDetail(activeCart) {
 }
 
 function buildAppointmentSelector(product, activeCart) {
-    let dateInput = `<input type="text" id="appointmentDate" placeholder="Select Date">`;
-    let timeSelect = `<select id="appointmentTime" onchange="updateAppointmentTime(this.value)">
-        <option value="">Select Time</option>
-        ${product.availableTimes.map(time => `<option value="${time}">${time}</option>`).join('')}
-    </select>`;
+    const dateInput = `
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">Select Date</span>
+            </div>
+            <input type="text" id="appointmentDate" class="custom-select form-control date-input" placeholder="Select Date">
+        </div>
+    `;
+    const timeSelect = `
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for="appointmentTime">Select Time</label>
+            </div>
+            <select id="appointmentTime" class="custom-select form-control" onchange="updateAppointmentTime(this.value)">
+                <option value="" selected>Select Time</option>
+                ${product.availableTimes.map(time => `<option value="${time}">${time}</option>`).join('')}
+            </select>
+        </div>
+    `;
 
     elements.productColors.html(dateInput);
     elements.productSizes.html(timeSelect);
@@ -64,11 +77,13 @@ function buildAppointmentSelector(product, activeCart) {
     flatpickr("#appointmentDate", {
         enable: product.availableDates,
         dateFormat: "Y-m-d",
-        onChange: function(selectedDates, dateStr, instance) {
+        onChange: function(selectedDates, dateStr) {
             updateAppointmentDate(dateStr);
         }
     });
 }
+
+
 
 function updateAppointmentDate(date) {
     activeCart.appointmentDate = date;
@@ -83,7 +98,7 @@ function buildColors(product, activeCart) {
         product.colors.find(c => c.id === activeCart.colorId).name : 
         "Select Color");
 
-    let colors = product.colors.map(color => `
+    const colors = product.colors.map(color => `
         <button class="btn rounded-circle ${color.id === activeCart.colorId ? 'border border-primary' : ''}" 
                 onclick="changeSelectedColor(${color.id})"
                 style="background-color: ${color.hash}; width: 40px; height: 40px">
@@ -97,7 +112,7 @@ function buildSizes(product, activeCart) {
         product.sizes.find(s => s.id === activeCart.sizeId).name : 
         "Select Size");
 
-    let sizes = product.sizes.map(size => `
+    const sizes = product.sizes.map(size => `
         <button class="btn btn-info ${size.id === activeCart.sizeId ? 'active' : ''}"
                 onclick="changeSelectedSize(${size.id})">
             ${size.name}
@@ -113,7 +128,7 @@ function buildQuantity(activeCart) {
 
     activeCart.quantity = Math.max(minQuantity, activeCart.quantity);
 
-    let qty = `
+    const qty = `
         <button class="btn" onclick="changeQuantity(${activeCart.quantity - 1}, ${minQuantity}, ${maxQuantity})">&dArr;</button>
         <input id="quantitySelector" onchange="changeQuantity(this.value, ${minQuantity}, ${maxQuantity})" 
                value="${activeCart.quantity}" type="number" class="disabled form-control w-25" 
@@ -221,7 +236,7 @@ function refreshProductPage() {
 
 // Document ready function
 $(() => {
-    let productId = getDataFromUrl("id");
+    const productId = getDataFromUrl("id");
 
     activeCart = {
         productId,
@@ -240,9 +255,9 @@ $(() => {
     elements.addToCartBtn.click(addToCart);
 });
 
+// Review functions
 function loadReviews(productId) {
-    // In a real application, you'd fetch reviews from a server
-    // For now, we'll use mock data
+    // Mock data for reviews
     const mockReviews = [
         { id: 1, rating: 5, comment: "Great product!", author: "John Doe" },
         { id: 2, rating: 4, comment: "Good value for money", author: "Jane Smith" }
@@ -251,7 +266,7 @@ function loadReviews(productId) {
     const reviewsHtml = mockReviews.map(review => `
         <div class="card mb-3">
             <div class="card-body">
-                <h5 class="card-title">${"★".repeat(review.rating)}${"☆".repeat(5-review.rating)}</h5>
+                <h5 class="card-title">${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}</h5>
                 <p class="card-text">${review.comment}</p>
                 <footer class="blockquote-footer">${review.author}</footer>
             </div>
@@ -262,14 +277,10 @@ function loadReviews(productId) {
 }
 
 $('#addReviewBtn').click(function() {
-    // In a real application, you'd open a modal or form to submit a review
-    alert("Review submission functionality would go here.");
+    alert("New product reviews disabled.");
 });
 
-// Call this function when loading the product page
-loadReviews(activeCart.productId);
-
-
+// Wishlist functions
 let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
 
 $('#addToWishlistBtn').click(function() {
@@ -283,9 +294,8 @@ $('#addToWishlistBtn').click(function() {
     }
 });
 
-
+// Related products functions
 function loadRelatedProducts(productId) {
-    // Filter out the current product and get up to 3 random products
     const relatedProducts = products
         .filter(p => p.id !== parseInt(productId))
         .sort(() => 0.5 - Math.random())
@@ -307,14 +317,15 @@ function loadRelatedProducts(productId) {
     $('#relatedProductsContainer').html(productsHtml);
 }
 
+// Initialization on page load
 $(function() {
-    // ... other initialization code ...
-    
-    // Get the product ID from the URL
     const productId = getDataFromUrl("id");
-    
+
     // Load the current product details
-    // ... (your existing code to load the product) ...
+    refreshProductPage();
+
+    // Load reviews for the current product
+    loadReviews(activeCart.productId);
 
     // Load related products
     loadRelatedProducts(productId);
