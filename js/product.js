@@ -254,16 +254,30 @@ $(() => {
 
     elements.addToCartBtn.click(addToCart);
 });
+// Utility function to shuffle an array
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
 
 // Review functions
 function loadReviews(productId) {
     // Mock data for reviews
     const mockReviews = [
         { id: 1, rating: 5, comment: "Great product!", author: "John Doe" },
-        { id: 2, rating: 4, comment: "Good value for money", author: "Jane Smith" }
+        { id: 2, rating: 4, comment: "Good value for money", author: "Jane Smith" },
+        { id: 3, rating: 3, comment: "It's okay.", author: "Alice Brown" },
+        { id: 4, rating: 5, comment: "I love them!", author: "Bob Johnson" },
+        { id: 5, rating: 5, comment: "Very pleased.", author: "Charlie Lee" }
     ];
 
-    const reviewsHtml = mockReviews.map(review => `
+    // Shuffle the reviews and select a subset (e.g., 3 reviews)
+    const selectedReviews = shuffleArray(mockReviews).slice(0, 3);
+
+    const reviewsHtml = selectedReviews.map(review => `
         <div class="card mb-3">
             <div class="card-body">
                 <h5 class="card-title">${"★".repeat(review.rating)}${"☆".repeat(5 - review.rating)}</h5>
@@ -299,7 +313,7 @@ function loadRelatedProducts(productId) {
     const relatedProducts = products
         .filter(p => p.id !== parseInt(productId))
         .sort(() => 0.5 - Math.random())
-        .slice(0, 4);
+        .slice(0, 3);
 
     const productsHtml = relatedProducts.map(product => `
         <div class="col-6 col-md-4">
