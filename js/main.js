@@ -70,7 +70,9 @@ function loadProducts() {
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw09a49167/images/2020/1V013893_964_LD_F.jpg?sw=1184&sh=1410&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw649937ba/images/2020/6K1381_484_LD_F.jpg?sw=1680&sh=2000&sm=cut',
-
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwea216f90/images/2020/1W010788_6415_LD_F.jpg?sw=1680&sh=2000&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw96994bcb/images/2020/1W010788_6415_LD_D.jpg?sw=1184&sh=1410&sm=cut',
+                    
                     // ... other images ...
                 ]
             },
@@ -87,8 +89,11 @@ function loadProducts() {
                 minQuantity: 2,
                 maxQuantity: 10,
                 images: [
-                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw9a56142b/images/2020/1P001052_034_LD_D.jpg?sw=1680&sh=2000&sm=cut',
-                    // ... other images ...
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwaba684ad/images/2020/1O001126_406_LD_F.jpg?sw=1680&sh=2000&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwf9af7222/images/2020/1O001126_406_OF_ED.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw11cb504b/images/2020/1O001126_406_OF_D.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw97f6e429/images/2020/1O001126_406_OF_D2.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw8c1e979f/images/2020/1O001126_406_LD_B.jpg?sw=1184&sh=1410&sm=cut'
                 ]
             },
             {
@@ -109,9 +114,13 @@ function loadProducts() {
                 minQuantity: 1,
                 maxQuantity: 50,
                 images: [
-                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwaba684ad/images/2020/1O001126_406_LD_F.jpg?sw=1680&sh=2000&sm=cut',
-                    // ... other images ...
-                ]
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw649937ba/images/2020/6K1381_484_LD_F.jpg?sw=1680&sh=2000&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw65b57cbd/images/2020/6K1381_002_LD_F.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw23ff744c/images/2020/6K1381_976_LD_F.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw6425e659/images/2020/6K1381_634_LD_B.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw0ca1bb9d/images/2020/6K1381_634_LD_F.jpg?sw=1680&sh=2000&sm=cut'
+
+                    ]
             },
             
             {
@@ -150,7 +159,12 @@ function loadProducts() {
                 minQuantity: 1,
                 maxQuantity: 1,
                 images: [
-                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw649937ba/images/2020/6K1381_484_LD_F.jpg?sw=1680&sh=2000&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwd3bb0a74/images/2020/1P001052_250_LS_F.jpg?sw=1680&sh=2000&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw522f69f3/images/2020/1P001052_061_LD_F.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw9a56142b/images/2020/1P001052_034_LD_D.jpg?sw=1680&sh=2000&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwc40b9cbe/images/2020/1P001052_034_OF_B.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwf6123754/images/2019/1P001052_976_OF_F.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwc5db1759/images/2019/1P001052_976_OF_D2.jpg?sw=1680&sh=2000&sm=cut'
                 ]
             },
             {
@@ -159,13 +173,18 @@ function loadProducts() {
                 name: "Exclusive Product",
                 description: "This is a preview of our exclusive product. Additional pictures and ability to add item to cart enabled immediatly after unlock payment is made",
                 fullDescription: "This is the full description of our exclusive product, only visible after unlocking.",
-                price: 99.99,
+                price: 0.02,
                 minQuantity: 1,
                 maxQuantity: 1,
                 // blur or censor your own image and place it first. the image will be blurred out but that can be simply bypassed for the first image. all additional images will be visible only after unlock paymnet is made. 
-                images: ['https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw649937ba/images/2020/6K1381_484_LD_F.jpg?sw=1680&sh=2000&sm=cut',
-                'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw8baf31e8/images/2020/3V011415_459_LD_B.jpg?sw=344&sh=529&sm=cut',
-            ],
+                images: [
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw0563da3a/images/2020/1V013893_893_LD_B.jpg?sw=1680&sh=2000&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw24fbddf1/images/2020/1V013893_025_LD_B.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw68ad9ff1/images/2020/1V013893_964_LD_B.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw09ee4d53/images/2020/1V013893_456_LD_B.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw7204be03/images/2020/1V013893_100_LD_B.jpg?sw=1680&sh=2000&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw09a49167/images/2020/1V013893_964_LD_F.jpg?sw=1184&sh=1410&sm=cut'
+                ],
                 unlockPrice: 0.01
             }
         ];
