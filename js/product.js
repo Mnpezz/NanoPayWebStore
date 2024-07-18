@@ -1,3 +1,4 @@
+
 // Global variables
 let activeCart = {};
 const elements = {
@@ -269,31 +270,6 @@ $('#addReviewBtn').click(function() {
 loadReviews(activeCart.productId);
 
 
-function loadRelatedProducts(productId) {
-    // In a real application, you'd fetch related products based on the current product
-    // For now, we'll just show a few random products
-    const relatedProducts = products.filter(p => p.id !== productId).slice(0, 4);
-
-    const productsHtml = relatedProducts.map(product => `
-        <div class="col-6 col-md-3 mb-3">
-            <div class="card">
-                <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
-                <div class="card-body">
-                    <h5 class="card-title">${product.name}</h5>
-                    <p class="card-text">$${product.price}</p>
-                    <a href="product.html?id=${product.id}" class="btn btn-primary">View Product</a>
-                </div>
-            </div>
-        </div>
-    `).join('');
-
-    $('#relatedProductsContainer').html(productsHtml);
-}
-
-// Call this function when loading the product page
-loadRelatedProducts(activeCart.productId);
-
-
 let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
 
 $('#addToWishlistBtn').click(function() {
@@ -305,4 +281,41 @@ $('#addToWishlistBtn').click(function() {
     } else {
         alert("This product is already in your wishlist.");
     }
+});
+
+
+function loadRelatedProducts(productId) {
+    // Filter out the current product and get up to 3 random products
+    const relatedProducts = products
+        .filter(p => p.id !== parseInt(productId))
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3);
+
+    const productsHtml = relatedProducts.map(product => `
+        <div class="col-6 col-md-4">
+            <div class="card">
+                <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
+                <div class="card-body">
+                    <h5 class="card-title">${product.name}</h5>
+                    <p class="card-text">$${product.price.toFixed(2)}</p>
+                    <a href="product.html?id=${product.id}" class="btn btn-primary">View Product</a>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    $('#relatedProductsContainer').html(productsHtml);
+}
+
+$(function() {
+    // ... other initialization code ...
+    
+    // Get the product ID from the URL
+    const productId = getDataFromUrl("id");
+    
+    // Load the current product details
+    // ... (your existing code to load the product) ...
+
+    // Load related products
+    loadRelatedProducts(productId);
 });
