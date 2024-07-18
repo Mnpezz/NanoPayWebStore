@@ -34,12 +34,14 @@
     <div class="container my-5">
         <div class="row">
 
-            <div class="col-md-1" id="thumbnailHolder">
+            <div id="thumbnailHolder" class="col-md-1 d-none d-md-block">
+                <!-- Thumbnails will be inserted here by JavaScript -->
             </div>
-            <div class="col-md-6 ">
-                <div id="productImagesCarousel" class="carousel slide" data-ride="carousel" >
-                    <div class="carousel-inner" id="caroInner">
-
+        
+            <div class="col-12 col-md-6">
+                <div id="productImagesCarousel" class="carousel slide" ride="carousel">
+                    <div id="caroInner" class="carousel-inner">
+                        <!-- Carousel items will be inserted here by JavaScript -->
                     </div>
                     <a class="carousel-control-prev" href="#productImagesCarousel" role="button" data-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -56,6 +58,7 @@
                 <div class="card" >
                     <div class="card-body">
                         <h5 class="card-title" id="itemName">Card title</h5>
+                        <button id="addToWishlistBtn" class="btn btn-outline-secondary btn-lg mt-3">Add to Wishlist</button>
                         <p class="card-text" id="itemDescription">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                         <h5 >$ <span id="itemPrice"></span></h5>
 
@@ -88,7 +91,16 @@
 
                         >Add To Cart</a>
                     </div>
+                </div>    
+                <div class="mt-5">
+                    <h3>Related Products</h3>
+                    <div id="relatedProductsContainer" class="row"></div>
                 </div>
+            </div>
+            <div class="mt-5">
+                <h3>Customer Reviews</h3>
+                <div id="reviewsContainer"></div>
+                <button id="addReviewBtn" class="btn btn-primary mt-3">Add Review</button>
             </div>
         </div>
     </div>
