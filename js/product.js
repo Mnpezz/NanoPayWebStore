@@ -48,12 +48,10 @@ function buildCaro(activeCart) {
 
     // Reinitialize the carousel after updating it
     if ($('.carousel').length) {
-        $('.carousel').carousel('dispose'); // Dispose of the existing carousel
-        $('.carousel').carousel(); // Reinitialize the carousel
+        $('.carousel').carousel('dispose');
+        $('.carousel').carousel();
     }
 }
-
-
 
 function buildDetail(activeCart) {
     const product = getProductById(products, activeCart.productId);
@@ -61,37 +59,33 @@ function buildDetail(activeCart) {
     const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
 
     elements.itemName.html(product.name);
+    elements.itemDescription.html(product.description);
 
     if (isExclusive) {
         if (isUnlocked) {
             elements.itemPrice.html(`$${product.price.toFixed(2)}`);
-            buildCaro(activeCart); // Show unblurred images
-            elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart).show();
-            elements.itemDescription.html(product.fullDescription || product.description); // Show full description
+            buildCaro(activeCart);
+            elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart);
         } else {
             elements.itemPrice.html(`Unlock for $${product.unlockPrice.toFixed(2)}`);
-            buildCaro(activeCart); // Show blurred images
-            elements.addToCartBtn.hide();
-            elements.addToCartBtn.after(`
-                <button id="unlockProductBtn" class="btn btn-primary btn-block btn-lg mt-3">Unlock Product</button>
-                <div id="nanoPayContainer"></div>
-            `);
-            setupNanoPay(product);
-            $('#unlockProductBtn').on('click', function(e) {
+            buildCaro(activeCart);
+            elements.addToCartBtn.text('Unlock Product').off('click').on('click', function(e) {
                 e.preventDefault();
                 unlockProduct(product);
             });
-            elements.itemDescription.html(product.description); // Show sample description
         }
         elements.productColors.hide();
         elements.productSizes.hide();
+    } else if (product.type === 'appointment') {
+        elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+        buildAppointmentSelector(product, activeCart);
+        elements.addToCartBtn.text('Book Appointment').off('click').on('click', addToCart);
     } else {
         elements.itemPrice.html(`$${product.price.toFixed(2)}`);
         buildCaro(activeCart);
         if (product.colors) buildColors(product, activeCart);
         if (product.sizes) buildSizes(product, activeCart);
-        elements.itemDescription.html(product.description); // Show regular description
-        elements.addToCartBtn.show();
+        elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart);
     }
 }
 
@@ -380,38 +374,6 @@ function loadRelatedProducts(productId) {
     `).join('');
 
     $('#relatedProductsContainer').html(productsHtml);
-}
-
-function buildDetail(activeCart) {
-    const product = getProductById(products, activeCart.productId);
-    const isExclusive = product.type === 'exclusive';
-    const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
-
-    elements.itemName.html(product.name);
-    elements.itemDescription.html(product.description);
-
-    if (isExclusive) {
-        if (isUnlocked) {
-            elements.itemPrice.html(`$${product.price.toFixed(2)}`);
-            buildCaro(activeCart, 1); // Show unblurred image (index 1)
-            elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart);
-        } else {
-            elements.itemPrice.html(`Unlock for $${product.unlockPrice.toFixed(2)}`);
-            buildCaro(activeCart, 0); // Show blurred image (index 0)
-            elements.addToCartBtn.text('Unlock Product').off('click').on('click', function(e) {
-                e.preventDefault();
-                unlockProduct(product);
-            });
-        }
-        elements.productColors.hide();
-        elements.productSizes.hide();
-    } else {
-        elements.itemPrice.html(`$${product.price.toFixed(2)}`);
-        buildCaro(activeCart);
-        if (product.colors) buildColors(product, activeCart);
-        if (product.sizes) buildSizes(product, activeCart);
-        elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart);
-    }
 }
 
 function unlockProduct(product) {
