@@ -50,18 +50,23 @@ function buildDetail(activeCart) {
 }
 
 function buildAppointmentSelector(product, activeCart) {
-    let dateSelect = `<select id="appointmentDate" onchange="updateAppointmentDate(this.value)">
-        <option value="">Select Date</option>
-        ${product.availableDates.map(date => `<option value="${date}">${date}</option>`).join('')}
-    </select>`;
-
+    let dateInput = `<input type="text" id="appointmentDate" placeholder="Select Date">`;
     let timeSelect = `<select id="appointmentTime" onchange="updateAppointmentTime(this.value)">
         <option value="">Select Time</option>
         ${product.availableTimes.map(time => `<option value="${time}">${time}</option>`).join('')}
     </select>`;
 
-    elements.productColors.html(dateSelect);
+    elements.productColors.html(dateInput);
     elements.productSizes.html(timeSelect);
+
+    // Initialize Flatpickr
+    flatpickr("#appointmentDate", {
+        enable: product.availableDates,
+        dateFormat: "Y-m-d",
+        onChange: function(selectedDates, dateStr, instance) {
+            updateAppointmentDate(dateStr);
+        }
+    });
 }
 
 function updateAppointmentDate(date) {
