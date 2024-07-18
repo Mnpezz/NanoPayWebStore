@@ -26,6 +26,32 @@
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
 <meta name="theme-color" content="#ffffff"><title>WebStore!</title>
+<style>
+    .input-group .form-control,
+    .input-group .custom-select {
+        background-color: white;
+    }
+    
+    .input-group .form-control.date-input {
+        position: relative;
+        background-color: white;
+    }
+
+    .input-group .form-control.date-input::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        width: 0;
+        height: 0;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid #495057; /* Same color as the select arrow */
+        transform: translateY(-50%);
+        pointer-events: none; /* Ensure the arrow does not interfere with clicking the input */
+    }
+</style>
+
 </head>
 <body>
 <div id="navbar"></div>
