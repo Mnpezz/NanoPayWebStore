@@ -134,16 +134,16 @@ When adding or modifying products in `main.js`, ensure that you provide all the 
 
 Exclusive items represent products or special offers that are only accessible after a payment has been made. They have additional handling for unlocking content and displaying it securely. The following attributes define an exclusive item:
 
-id: Unique identifier for the product
-type: Set to 'exclusive' for these items
-name: The product name
-description: A sample description shown before the product is unlocked
-fullDescription: The full detailed description shown after the product is unlocked
-price: The base price of the product
-images: An array of image URLs for the product
-minQuantity: Minimum quantity that can be ordered (default: 1)
-maxQuantity: Maximum quantity that can be ordered
-unlockPrice: The price it will cost to unlock the product 
+- 'id': Unique identifier for the product
+- type': Set to 'exclusive' for these items
+- name': The product name
+- 'description': A sample description shown before the product is unlocked
+- 'fullDescription': The full detailed description shown after the product is unlocked
+- 'price': The base price of the product
+- 'images': An array of image URLs for the product
+- 'minQuantity': Minimum quantity that can be ordered (default: 1)
+- 'maxQuantity': Maximum quantity that can be ordered
+- 'unlockPrice': The price it will cost to unlock the product 
 
 Example of an exclusive item:
 ```javascript
