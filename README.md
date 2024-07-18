@@ -36,9 +36,10 @@ const DISCOUNT_CODES = {
 };
 
 nanopay.open({
-    address: 'nano_1youraddressa1b2c3d4e5f6g7h8i9j0',
-    amount: total,
-    email: 'your@email.com'
+    address: '@nano_1youraddressa1b2c3d4e5f6g7h8i9j0',
+    notify: 'your@email.com',
+    contact: true, 
+    shipping: 10,
 });
 ```
 
@@ -148,6 +149,5 @@ NanoPay.wall({
 ## Installation
 
 1. Clone this repository to your local machine or server.
-2. Ensure you have a web server set up to serve these files (e.g., Apache, Nginx).
-3. Make the necessary configurations as described above.
-4. Deploy the files to your web server.
+2. Make the necessary configurations as described above.
+3. Deploy the files to your web server.
