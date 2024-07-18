@@ -176,8 +176,8 @@ Configure the NanoPay unlockProduct in your JavaScript to handle the exclusive p
 ```javascript
 function unlockProduct(product) {
     NanoPay.open({
-        address: '@yourNanoUsername or address',
-        notify: 'your@email',
+        address: '@nano_1youraddressa1b2c3d4e5f6g7h8i9j0',
+        notify: 'your@email.com',
         contact: false,
         shipping: false,
         currency: 'USD',
