@@ -130,7 +130,8 @@ Example of a consulting item:
 When adding or modifying products in `main.js`, ensure that you provide all the necessary attributes for each product type. This structure allows for flexible product configurations while maintaining consistency across the store.
 
 
-2.3. Exclusive Items
+### 2.3. Exclusive Items
+
 Exclusive items represent products or special offers that are only accessible after a payment has been made. They have additional handling for unlocking content and displaying it securely. The following attributes define an exclusive item:
 
 id: Unique identifier for the product
