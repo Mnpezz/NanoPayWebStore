@@ -238,3 +238,71 @@ $(() => {
 
     elements.addToCartBtn.click(addToCart);
 });
+
+function loadReviews(productId) {
+    // In a real application, you'd fetch reviews from a server
+    // For now, we'll use mock data
+    const mockReviews = [
+        { id: 1, rating: 5, comment: "Great product!", author: "John Doe" },
+        { id: 2, rating: 4, comment: "Good value for money", author: "Jane Smith" }
+    ];
+
+    const reviewsHtml = mockReviews.map(review => `
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">${"★".repeat(review.rating)}${"☆".repeat(5-review.rating)}</h5>
+                <p class="card-text">${review.comment}</p>
+                <footer class="blockquote-footer">${review.author}</footer>
+            </div>
+        </div>
+    `).join('');
+
+    $('#reviewsContainer').html(reviewsHtml);
+}
+
+$('#addReviewBtn').click(function() {
+    // In a real application, you'd open a modal or form to submit a review
+    alert("Review submission functionality would go here.");
+});
+
+// Call this function when loading the product page
+loadReviews(activeCart.productId);
+
+
+function loadRelatedProducts(productId) {
+    // In a real application, you'd fetch related products based on the current product
+    // For now, we'll just show a few random products
+    const relatedProducts = products.filter(p => p.id !== productId).slice(0, 4);
+
+    const productsHtml = relatedProducts.map(product => `
+        <div class="col-6 col-md-3 mb-3">
+            <div class="card">
+                <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
+                <div class="card-body">
+                    <h5 class="card-title">${product.name}</h5>
+                    <p class="card-text">$${product.price}</p>
+                    <a href="product.html?id=${product.id}" class="btn btn-primary">View Product</a>
+                </div>
+            </div>
+        </div>
+    `).join('');
+
+    $('#relatedProductsContainer').html(productsHtml);
+}
+
+// Call this function when loading the product page
+loadRelatedProducts(activeCart.productId);
+
+
+let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+$('#addToWishlistBtn').click(function() {
+    const productId = activeCart.productId;
+    if (!wishlist.includes(productId)) {
+        wishlist.push(productId);
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        alert("Product added to wishlist!");
+    } else {
+        alert("This product is already in your wishlist.");
+    }
+});
