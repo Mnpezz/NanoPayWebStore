@@ -33,11 +33,10 @@
 <div id="app">
     <div class="container my-5">
         <div class="row">
-
             <div id="thumbnailHolder" class="col-md-1 d-none d-md-block">
                 <!-- Thumbnails will be inserted here by JavaScript -->
             </div>
-        
+            
             <div class="col-12 col-md-6">
                 <div id="productImagesCarousel" class="carousel slide" ride="carousel">
                     <div id="caroInner" class="carousel-inner">
@@ -55,57 +54,46 @@
             </div>
 
             <div class="col-md-5">
-                <div class="card" >
+                <div class="card">
                     <div class="card-body">
                         <h5 class="card-title" id="itemName">Card title</h5>
-                        <button id="addToWishlistBtn" class="btn btn-outline-secondary btn-lg mt-3">Add to Wishlist</button>
                         <p class="card-text" id="itemDescription">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <h5 >$ <span id="itemPrice"></span></h5>
+                        <h5>$ <span id="itemPrice"></span></h5>
 
-
-                        <div class=" mt-5 ">
-                            <div id="itemColors" >
-
-                            </div>
-                            <p class="mb-5" ><span id="selectedColor"></span></p>
+                        <div class="mt-5">
+                            <div id="itemColors"></div>
+                            <p class="mb-5"><span id="selectedColor"></span></p>
                         </div>
 
-
-
                         <div class="my-5">
-                            <div id="productSizes" >
-
-                            </div>
+                            <div id="productSizes"></div>
                             <p><span id="selectedSize"></span></p>
                         </div>
 
+                        <div class="form-inline my-5" id="qtyHolder"></div>
 
-                        <div class="form-inline my-5" id="qtyHolder">
+                        <a href="index.html" class="btn btn-primary btn-block btn-lg" id="AddToCartBtn">Add To Cart</a>
+                        <button id="addToWishlistBtn" class="btn btn-outline-secondary btn-block btn-lg mt-3">Add to Wishlist</button>
 
-                        </div>
-
-
-                        <a href="index.html"
-                           class="btn btn-primary btn-block btn-lg"
-                           id="AddToCartBtn"
-
-                        >Add To Cart</a>
                     </div>
                 </div>    
-                <div class="mt-5">
-                    <h3>Related Products</h3>
-                    <div id="relatedProductsContainer" class="row"></div>
-                </div>
             </div>
-            <div class="mt-5">
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-md-6">
                 <h3>Customer Reviews</h3>
                 <div id="reviewsContainer"></div>
                 <button id="addReviewBtn" class="btn btn-primary mt-3">Add Review</button>
             </div>
+            <div class="col-md-6">
+                <h3>Related Products</h3>
+                <div id="relatedProductsContainer" class="row"></div>
+            </div>
         </div>
     </div>
-
 </div>
+
 
 
 <div id="footer"></div>
