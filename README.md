@@ -132,6 +132,8 @@ When adding or modifying products in `main.js`, ensure that you provide all the 
 
 ### 2.3. Exclusive Items
 
+none of this is safe from f12
+
 Exclusive items represent products or special offers that are only accessible after a payment has been made. They have additional handling for unlocking content and displaying it securely. The following attributes define an exclusive item:
 
 - 'id': Unique identifier for the product
