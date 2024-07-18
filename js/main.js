@@ -144,8 +144,7 @@ function loadProducts() {
                     "2024-12-17", "2024-12-19",
                     "2024-12-24", "2024-12-26",
                     "2024-12-31"
-                ],
-                availableTimes: ["09:00 AM", "11 AM", "1:00 PM", "15:00"],
+                ],                availableTimes: ["09:00 AM", "11 AM", "1:00 PM", "15:00"],
                 minQuantity: 1,
                 maxQuantity: 1,
                 images: [
