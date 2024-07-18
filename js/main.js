@@ -68,7 +68,9 @@ function loadProducts() {
                 minQuantity: 5,
                 maxQuantity: 10,
                 images: [
-                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw09a49167/images/2020/1V013893_964_LD_F.jpg?sw=1184&sh=1410&sm=cut'
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw09a49167/images/2020/1V013893_964_LD_F.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw649937ba/images/2020/6K1381_484_LD_F.jpg?sw=1680&sh=2000&sm=cut',
+
                     // ... other images ...
                 ]
             },
@@ -151,6 +153,21 @@ function loadProducts() {
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw649937ba/images/2020/6K1381_484_LD_F.jpg?sw=1680&sh=2000&sm=cut',
                 ]
             },
+            {
+                id: ++prodIds,
+                type: 'exclusive',
+                name: "Exclusive Product",
+                description: "This is a preview of our exclusive product. Additional pictures and ability to add item to cart enabled immediatly after unlock payment is made",
+                fullDescription: "This is the full description of our exclusive product, only visible after unlocking.",
+                price: 99.99,
+                minQuantity: 1,
+                maxQuantity: 1,
+                // blur or censor your own image and place it first. the image will be blurred out but that can be simply bypassed for the first image. all additional images will be visible only after unlock paymnet is made. 
+                images: ['https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw649937ba/images/2020/6K1381_484_LD_F.jpg?sw=1680&sh=2000&sm=cut',
+                'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw8baf31e8/images/2020/3V011415_459_LD_B.jpg?sw=344&sh=529&sm=cut',
+            ],
+                unlockPrice: 0.01
+            }
         ];
         
         saveItemToStore(pds, "products");
