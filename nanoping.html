@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+              integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    
+        <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="img/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="img/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="img/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="img/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="img/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+        <link rel="manifest" href="img/manifest.json">
+        <meta name="msapplication-TileColor" content="#ffffff">
+        <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+        <meta name="theme-color" content="#ffffff">
+    <title>Nano Network Visualizer & Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212; /* Dark background */
+            color: #e0e0e0; /* Light text color for better contrast */
+        }
+    
+        #navbar {
+            background-color: #1e1e1e; /* Slightly lighter than body for contrast */
+            color: #ffffff;
+            padding: 10px 0;
+        }
+    
+        #app {
+            min-height: calc(100vh - 160px); /* Adjust based on navbar and footer height */
+        }
+    
+        #game-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    
+        #transaction-list {
+            width: 300px;
+            height: 600px;
+            overflow-y: scroll;
+            background-color: #1e1e1e; /* Dark background for transaction list */
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin-right: 20px;
+        }
+    
+        #transaction-list-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #4CAF50; /* Adjusted green color for better visibility */
+        }
+    
+        .transaction-item {
+            cursor: pointer;
+            padding: 5px;
+            border-bottom: 1px solid #333;
+        }
+    
+        .transaction-item:hover {
+            background-color: #2c2c2c;
+        }
+    
+        canvas {
+            border: 1px solid #333;
+            border-radius: 8px;
+            background-color: #1e1e1e;
+        }
+    
+        #controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+    
+        #score {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4CAF50; /* Adjusted green color for better visibility */
+        }
+    
+        #faucet {
+            cursor: pointer;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.2s ease;
+        }
+    
+        #faucet:hover {
+            background-color: #45a049;
+        }
+    
+        #footer {
+            background-color: #1e1e1e;
+            color: #ffffff;
+            padding: 20px 0;
+            text-align: center;
+        }
+    
+        #footer a {
+            color: #FFC107;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/nanocurrency@2.5.0/dist/nanocurrency.umd.js"></script>
+</head>
+<body>
+    <div id="navbar"></div>
+    <div id="app" class="container my-5">
+        <div id="game-container">
+            <div id="transaction-list">
+                <div id="transaction-list-title">Transaction Feed</div>
+            </div>
+            <canvas id="gameCanvas" width="800" height="600"></canvas>
+        </div>
+        <div class="controls">
+            <div id="score">Score: 0</div>
+            <button hidden id="faucet">Claim Nano Faucet</button>
+        </div>
+    </div>
+    <div id="footer"></div>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const transactionList = document.getElementById('transaction-list');
+        const scoreElement = document.getElementById('score');
+        const faucetButton = document.getElementById('faucet');
+    
+        const paddle = {
+            x: canvas.width / 2 - 50,
+            y: canvas.height - 20,
+            width: 100,
+            height: 10
+        };
+    
+        let balls = [];
+        let transactions = [];
+        let score = 0;
+    
+        function Ball(x, y, amount) {
+            const speedFactor = 1; // Keep speed consistent
+            this.x = x;
+            this.y = y;
+            this.radius = Math.max(5, Math.min(amount * 5, 50)); // Ball size based on transaction amount
+            const targetX = paddle.x + paddle.width / 2;
+            const targetY = paddle.y;
+            const distanceX = targetX - x;
+            const distanceY = targetY - y;
+            const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+            const baseSpeed = 2; // Base speed
+    
+            let speed = distance / 50 * speedFactor;
+            speed = Math.max(baseSpeed, speed); // Ensure a minimum speed
+    
+            this.dx = (distanceX / distance) * speed;
+            this.dy = (distanceY / distance) * speed;
+    
+            // Ensure the vertical speed is significant
+            if (Math.abs(this.dy) < baseSpeed) {
+                this.dy = baseSpeed * Math.sign(this.dy);
+            }
+    
+            // Ensure the vertical speed is always directed downwards towards the paddle
+            if (this.dy < 0) {
+                this.dy = Math.abs(this.dy);
+            }
+    
+            this.color = getRandomNeonColor(); // Bright neon color
+        }
+    
+        function getRandomNeonColor() {
+            const neonColors = ['#FF00FF', '#00FFFF', '#FFFF00', '#FF00FF', '#00FF00', '#FF0000'];
+            return neonColors[Math.floor(Math.random() * neonColors.length)];
+        }
+    
+        function drawPaddle() {
+            ctx.fillStyle = '#0000FF';
+            ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+        }
+    
+        function drawBall(ball) {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = ball.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+    
+        function moveBall(ball) {
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+    
+            // Bounce off walls
+            if (ball.x - ball.radius < 0 || ball.x + ball.radius > canvas.width) {
+                ball.dx = -ball.dx;
+            }
+    
+            if (ball.y - ball.radius < 0) {
+                ball.dy = Math.abs(ball.dy); // Ensure it moves downwards
+            }
+    
+            // Check for paddle collision
+            if (ball.y + ball.radius > paddle.y &&
+                ball.x > paddle.x &&
+                ball.x < paddle.x + paddle.width) {
+                ball.dy = -ball.dy;
+                // Adjust horizontal speed based on where it hit the paddle
+                ball.dx += (ball.x - (paddle.x + paddle.width / 2)) / (paddle.width / 2) * 2;
+                score += Math.floor(ball.radius);
+                updateScore();
+            }
+    
+            // Ball is out of bounds
+            if (ball.y + ball.radius > canvas.height) {
+                return false;
+            }
+    
+            return true;
+        }
+    
+        function updateScore() {
+            scoreElement.textContent = `Score: ${score}`;
+        }
+    
+        function update() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawPaddle();
+    
+            balls = balls.filter(ball => {
+                drawBall(ball);
+                return moveBall(ball);
+            });
+    
+            requestAnimationFrame(update);
+        }
+    
+        function addTransaction(message) {
+            const amount = message.amount ? raw_to_nano(message.amount) : 0;
+            const transaction = {
+                hash: message.hash,
+                account: message.account || 'Unknown',
+                amount: amount,
+                link_as_account: message.link_as_account || null
+            };
+            transactions.unshift(transaction);
+            updateTransactionList();
+    
+            balls.push(new Ball(Math.random() * canvas.width, 0, amount));
+        }
+    
+        function updateTransactionList() {
+            transactionList.innerHTML = '<div id="transaction-list-title">Transaction Feed</div>';
+            transactions.slice(0, 100).forEach(transaction => {
+                const item = document.createElement('div');
+                item.className = 'transaction-item';
+                const fromAccount = transaction.account !== 'Unknown' ? transaction.account.slice(0, 10) + '...' : 'Unknown';
+                const toAccount = transaction.link_as_account ? transaction.link_as_account.slice(0, 10) + '...' : 'Unknown';
+                item.innerHTML = `Amount: ${transaction.amount} NANO<br>From: ${fromAccount}${toAccount !== 'Unknown' ? `<br>To: ${toAccount}` : ''}`;
+                item.onclick = () => {
+                    const accountUrl = transaction.link_as_account ? `https://blocklattice.io/account/${transaction.link_as_account}` : `https://blocklattice.io/account/${transaction.account}`;
+                    window.open(accountUrl, '_blank');
+                };
+                transactionList.appendChild(item);
+            });
+        }
+    
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            paddle.x = e.clientX - rect.left - paddle.width / 2;
+            if (paddle.x < 0) paddle.x = 0;
+            if (paddle.x + paddle.width > canvas.width) paddle.x = canvas.width - paddle.width;
+        });
+    
+        function log_dtg(date=undefined) {
+            let dtg = new Date();
+            if (date !== undefined) dtg = new Date(date);
+            return ''+ dtg.toDateString() +' '+ dtg.toLocaleTimeString();
+        }
+    
+        function new_websocket(url, ready_callback, message_callback) {
+            let socket = new WebSocket(url);
+            socket.onopen = function() {
+                console.log('WebSocket is now open');
+                if (ready_callback !== undefined) ready_callback(this);
+            }
+            socket.onerror = function(e) {
+                console.error('WebSocket error');
+                console.error(e);
+            }
+            socket.onmessage = function(response) {
+                if (message_callback !== undefined) message_callback(response);
+            }
+    
+            return socket;
+        }
+    
+        function raw_to_nano(raw) {
+            try {
+                return NanoCurrency.convert(raw, {
+                    from: 'raw',
+                    to: 'Nano',
+                });
+            } catch (error) {
+                console.error('Error converting raw to Nano:', error);
+                return 'Unknown';
+            }
+        }
+    
+        function message_handler(message) {
+            addTransaction(message);
+        }
+    
+        async function claimFaucet() {
+            const walletAddress = prompt('Enter your Nano wallet address to receive the faucet reward:');
+            if (!walletAddress) {
+                alert('Wallet address is required.');
+                return;
+            }
+    
+            try {
+                const response = await fetch('/claim-faucet', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        walletAddress,
+                        amount: scoreToNano(score)
+                    })
+                });
+    
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`Faucet claimed successfully! Transaction hash: ${data.hash}`);
+                } else {
+                    alert('Failed to claim faucet. Please try again later.');
+                }
+            } catch (error) {
+                console.error('Error claiming faucet:', error);
+                alert('Error claiming faucet. Please try again later.');
+            }
+        }
+    
+        function scoreToNano(score) {
+            return score * 1e30; // Convert score to raw Nano (example conversion)
+        }
+    
+        faucetButton.addEventListener('click', claimFaucet);
+    
+        new_websocket('wss://node.somenano.com/repeater', function(socket) {
+            let params = {
+                action: 'subscribe',
+                topic: 'confirmation'
+            }
+            socket.send(JSON.stringify(params));
+        }, function(response) {
+            let data = JSON.parse(response.data);
+            if (data.topic != 'confirmation') return;
+            console.log(log_dtg() + ': Received ' + data.blocks.length + ' new blocks from the SomeNano Repeater from the last ' + data.duration / 1000 + ' seconds with ' + data.cps.toFixed(2) + ' confirmations per second over the last 30 seconds.');
+            for (let message of data.blocks) {
+                message_handler(message);
+            }
+        });
+    
+        update();
+    
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
+    integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
+    crossorigin="anonymous"></script>
+    <script src="js/main.js" type="text/javascript"></script>
+    <script src="js/cart.js" type="text/javascript"></script>
+      
+    
+</body>
+</html>
