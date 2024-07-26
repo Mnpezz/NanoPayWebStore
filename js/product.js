@@ -20,12 +20,17 @@ function buildThumbNail(activeCart) {
     const isExclusive = product.type === 'exclusive';
     const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
 
+    if (isExclusive && !isUnlocked) {
+        elements.thumbnailHolder.empty().hide(); // Clear and hide the thumbnail holder
+        return;
+    }
+
     const thumbnails = product.images.map((image, index) => `
         <img src="${image}" onclick="changeActiveImage(${index})"
-             class="img-thumbnail page-link p-1 m-1 ${activeCart.caroImgActive === index ? 'border border-primary' : ''} ${isExclusive && !isUnlocked && index === 0 ? 'blurred' : ''}"
-             alt="${product.name}" ${isExclusive && !isUnlocked && index > 0 ? 'style="display:none;"' : ''} />
+             class="img-thumbnail page-link p-1 m-1 ${activeCart.caroImgActive === index ? 'border border-primary' : ''}"
+             alt="${product.name}" />
     `).join('');
-    elements.thumbnailHolder.html(thumbnails);
+    elements.thumbnailHolder.html(thumbnails).show(); // Show the thumbnail holder
 }
 
 
@@ -60,35 +65,32 @@ function buildDetail(activeCart) {
 
     elements.itemName.html(product.name);
     elements.itemDescription.html(product.description);
+    elements.itemPrice.html(`$${product.price.toFixed(2)}`);
 
-    if (isExclusive) {
-        if (isUnlocked) {
-            elements.itemPrice.html(`$${product.price.toFixed(2)}`);
-            buildCaro(activeCart);
-            elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart);
-        } else {
-            elements.itemPrice.html(`Unlock for $${product.unlockPrice.toFixed(2)}`);
-            buildCaro(activeCart);
-            elements.addToCartBtn.text('Unlock Product').off('click').on('click', function(e) {
-                e.preventDefault();
-                unlockProduct(product);
-            });
-        }
-        elements.productColors.hide();
-        elements.productSizes.hide();
-    } else if (product.type === 'appointment') {
-        elements.itemPrice.html(`$${product.price.toFixed(2)}`);
-        buildAppointmentSelector(product, activeCart);
-        elements.addToCartBtn.text('Book Appointment').off('click').on('click', addToCart);
-    } else {
-        elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+    if (isExclusive && !isUnlocked) {
+        // Show only the first image (blurred) initially
+        activeCart.caroImgActive = 0;
         buildCaro(activeCart);
-        if (product.colors) buildColors(product, activeCart);
-        if (product.sizes) buildSizes(product, activeCart);
-        elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart);
+        elements.thumbnailHolder.empty().hide(); // Clear and hide the thumbnail holder
+
+        // Set up NanoPay.wall
+        NanoPay.wall({ 
+            element: '.premium',
+            title: 'Unlock Exclusive Product',
+            button: 'Unlock Product', 
+            amount: product.unlockPrice,
+            address: '@mnpezz', // Your Nano Address or Username
+            success: (block) => {
+                sessionStorage.setItem(`unlocked_${product.id}`, 'true');
+                alert("Product unlocked! The page will refresh to show the full product details.");
+                location.reload(); // Refresh the page
+            }
+        });
+    } else {
+        // Regular product logic or unlocked exclusive product
+        revealProduct(product, activeCart);
     }
 }
-
 
 
 function buildAppointmentSelector(product, activeCart) {
@@ -376,45 +378,35 @@ function loadRelatedProducts(productId) {
     $('#relatedProductsContainer').html(productsHtml);
 }
 
-function unlockProduct(product) {
-    NanoPay.open({
-        address: '@mnpezz',
-        notify: 'mnpezz@gmail.com',
-        contact: false,
-        shipping: false,
-        currency: 'USD',
-        line_items: [{
-            name: 'Unlock ' + product.name,
-            quantity: 1,
-            price: product.unlockPrice.toString()
-        }],
-        success: function(block) {
-            revealProduct(product);
-        },
-        cancel: function() {
-            alert("Payment cancelled. Product remains locked.");
-        }
-    });
-}
+function revealProduct(product, activeCart) {
+    elements.itemDescription.html(product.fullDescription || product.description);
 
-function revealProduct(product) {
-    sessionStorage.setItem(`unlocked_${product.id}`, 'true');
-    elements.itemPrice.html(`$${product.price.toFixed(2)}`);
-    elements.itemDescription.html(product.fullDescription || product.description); // Update the description
+    // Show all images
+    buildCaro(activeCart);
+    buildThumbNail(activeCart);
 
-    activeCart.caroImgActive = 0; // Reset the active image index
-    buildCaro(activeCart); // Show all images
-    buildThumbNail(activeCart); // Update thumbnails
-
-    // Reinitialize the carousel after updating it
+    // Reinitialize the carousel
     if ($('.carousel').length) {
-        $('.carousel').carousel('dispose'); // Dispose of the existing carousel
-        $('.carousel').carousel(); // Reinitialize the carousel
+        $('.carousel').carousel('dispose');
+        $('.carousel').carousel();
     }
 
-    elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart).show();
-}
+    // Build colors, sizes, and quantity selector
+    if (product.colors) buildColors(product, activeCart);
+    if (product.sizes) buildSizes(product, activeCart);
+    buildQuantity(activeCart);
 
+    // Update the button
+    elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart).show();
+
+    // Show the premium content
+    $('.premium').show();
+
+    // Remove the NanoPay wall if it exists
+    if (typeof NanoPay !== 'undefined' && NanoPay.remove) {
+        NanoPay.remove();
+    }
+}
 
 
 // Initialization on page load
@@ -429,11 +421,15 @@ $(function() {
         caroImgActive: 0,
     };
 
-    refreshProductPage();
-
     const product = getProductById(products, productId);
-    if (product.type === 'exclusive' && sessionStorage.getItem(`unlocked_${product.id}`) === 'true') {
-        revealProduct(product);
+    if (product.type === 'exclusive') {
+        if (sessionStorage.getItem(`unlocked_${product.id}`) === 'true') {
+            revealProduct(product, activeCart);
+        } else {
+            buildDetail(activeCart);
+        }
+    } else {
+        buildDetail(activeCart);
     }
     
     // Load reviews for the current product
