@@ -27,6 +27,12 @@
 <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
 <meta name="theme-color" content="#ffffff"><title>WebStore!</title>
 <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: lightgray;
+    }
     .input-group .form-control,
     .input-group .custom-select {
         background-color: white;
@@ -52,33 +58,34 @@
     }
 
     .carousel-inner {
-    position: relative;
-}
+        position: relative;
+    }
 
-.locked-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-    font-size: 1.5rem;
-    z-index: 10;
-}
+    .locked-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        font-size: 1.5rem;
+        z-index: 10;
+    }
 
-.locked-overlay i {
-    font-size: 3rem;
-    margin-bottom: 10px;
-}
+    .locked-overlay i {
+        font-size: 3rem;
+        margin-bottom: 10px;
+    }
 
-.blurred {
-    filter: blur(5px);
-}
+    .blurred {
+        filter: blur(5px);
+    }
+    .premium { display: none; }
 </style>
 
 </head>
@@ -111,27 +118,26 @@
             <div class="col-md-5">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title" id="itemName">Card title</h5>
-                        <p class="card-text" id="itemDescription">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <h5><span id="itemPrice"></span></h5>
-
-                        <div class="mt-5">
-                            <div id="itemColors"></div>
-                            <p class="mb-5"><span id="selectedColor"></span></p>
+                        <h5 id="itemName" class="card-title"></h5>
+                        <p id="itemDescription"></p>
+                        <h5 id="itemPrice"></h5>            
+                        <div class="premium">
+                            <!-- This div will be hidden and revealed by NanoPay.wall -->
+                            <div id="thumbnailHolder" class="d-none d-md-block mb-3">
+                                <!-- Thumbnails will be inserted here -->
+                            </div>
+                            <div id="itemColors" class="mt-5"></div>
+                            <div id="selectedColor"></div>
+                            <div id="productSizes" class="my-5"></div>
+                            <div id="selectedSize"></div>
+                            <div id="qtyHolder" class="form-inline my-5"></div>
+                            <button id="AddToCartBtn" class="btn btn-primary btn-block btn-lg">Add To Cart</button>
                         </div>
-
-                        <div class="my-5">
-                            <div id="productSizes"></div>
-                            <p><span id="selectedSize"></span></p>
-                        </div>
-
-                        <div class="form-inline my-5" id="qtyHolder"></div>
-
-                        <a href="index.html" class="btn btn-primary btn-block btn-lg" id="AddToCartBtn">Add To Cart</a>
-                        <button id="addToWishlistBtn" class="btn btn-outline-secondary btn-block btn-lg mt-3">Add to Wishlist</button>
+                        
+                        <button id="addToWishlistBtn" class="btn btn-secondary btn-block mt-2">Add to Wishlist</button>
 
                     </div>
-                </div>    
+                </div>
             </div>
         </div>
         
