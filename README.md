@@ -182,33 +182,6 @@ Initial State: Before the product is unlocked, only the sample description and t
 Unlocking: After the payment, the full description and all images (unblurred) are shown.
 Blurred Effect: Use CSS to blur the initial image to give a preview without revealing the full content in the index.html and the product.html.
 
-Configuration
-Update NanoPay unlockProduct for Exclusive Items in product.js:
-Configure the NanoPay unlockProduct in your JavaScript to handle the exclusive product purchase. This involves specifying the element to lock, the amount, and the Nano address for payment.
-
-```javascript
-function unlockProduct(product) {
-    NanoPay.open({
-        address: '@nano_1youraddressa1b2c3d4e5f6g7h8i9j0',
-        notify: 'your@email.com',
-        contact: false,
-        shipping: false,
-        currency: 'USD',
-        line_items: [{
-            name: 'Unlock ' + product.name,
-            quantity: 1,
-            price: product.unlockPrice.toString()
-        }],
-        success: function(block) {
-            revealProduct(product);
-        },
-        cancel: function() {
-            alert("Payment cancelled. Product remains locked.");
-        }
-    });
-}
-
-```
 
 ### 3. Paid Blog Configuration
 
