@@ -68,26 +68,29 @@ function buildDetail(activeCart) {
     elements.itemPrice.html(`$${product.price.toFixed(2)}`);
 
     if (isExclusive && !isUnlocked) {
-        // Show only the first image (blurred) initially
+        // Exclusive product logic (unchanged)
         activeCart.caroImgActive = 0;
         buildCaro(activeCart);
-        elements.thumbnailHolder.empty().hide(); // Clear and hide the thumbnail holder
+        elements.thumbnailHolder.empty().hide();
 
-        // Set up NanoPay.wall
         NanoPay.wall({ 
             element: '.premium',
             title: 'Unlock Exclusive Product',
             button: 'Unlock Product', 
             amount: product.unlockPrice,
-            address: '@mnpezz', // Your Nano Address or Username
+            address: '@mnpezz',
             success: (block) => {
                 sessionStorage.setItem(`unlocked_${product.id}`, 'true');
                 alert("Product unlocked! The page will refresh to show the full product details.");
-                location.reload(); // Refresh the page
+                location.reload();
             }
         });
+    } else if (product.type === 'appointment') {
+        // Appointment product logic
+        revealProduct(product, activeCart);
+        buildAppointmentSelector(product, activeCart);
     } else {
-        // Regular product logic or unlocked exclusive product
+        // Regular product logic
         revealProduct(product, activeCart);
     }
 }
@@ -391,10 +394,18 @@ function revealProduct(product, activeCart) {
         $('.carousel').carousel();
     }
 
-    // Build colors, sizes, and quantity selector
-    if (product.colors) buildColors(product, activeCart);
-    if (product.sizes) buildSizes(product, activeCart);
-    buildQuantity(activeCart);
+    // Build colors, sizes, and quantity selector based on product type
+    if (product.type === 'regular') {
+        if (product.colors) buildColors(product, activeCart);
+        if (product.sizes) buildSizes(product, activeCart);
+        buildQuantity(activeCart);
+    } else if (product.type === 'appointment') {
+        // Clear color and size selectors for appointment products
+        elements.productColors.empty();
+        elements.productSizes.empty();
+        elements.selectedColor.empty();
+        elements.selectedSize.empty();
+    }
 
     // Update the button
     elements.addToCartBtn.text('Add To Cart').off('click').on('click', addToCart).show();
