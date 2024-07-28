@@ -77,7 +77,7 @@ function buildCartBody() {
             let maxQuantity = prod.maxQuantity || 100;
 
             let itemDetails = '';
-            if (prod.type === 'regular') {
+            if (prod.type === 'regular' || prod.type === 'exclusive') {
                 let selectedColor = prod.colors ? prod.colors.find(color => color.id === item.colorId) : null;
                 let selectedSize = prod.sizes ? prod.sizes.find(size => size.id === item.sizeId) : null;
                 itemDetails = `
@@ -257,7 +257,17 @@ function loadWishlist() {
     let str = '';
     if (wishlist.length > 0) {
         wishlist.forEach((productId, index) => {
-            let prod = getProductById(products, productId);
+            let prod = getProductById(products, parseInt(productId));
+            if (!prod) {
+                console.error(`Product with id ${productId} not found`);
+                return;
+            }
+            const isExclusive = prod.type === 'exclusive';
+            const isUnlocked = sessionStorage.getItem(`unlocked_${prod.id}`) === 'true';
+            const addToCartButton = isExclusive && !isUnlocked ?
+                `<button class="btn btn-secondary btn-sm" disabled>Unlock Required</button>` :
+                `<button onclick="addToCartFromWishlist(${index})" class="btn btn-primary btn-sm">Add to Cart</button>`;
+            
             str += `
                 <tr>
                     <td><img width="60px" class="img-thumbnail" src="${prod.images[0]}" alt="${prod.name}"></td>
@@ -266,7 +276,7 @@ function loadWishlist() {
                     </td>
                     <td>$${prod.price.toFixed(2)}</td>
                     <td>
-                        <button onclick="addToCartFromWishlist(${index})" class="btn btn-primary btn-sm">Add to Cart</button>
+                        ${addToCartButton}
                         <button onclick="removeFromWishlist(${index})" class="btn btn-danger btn-sm">Remove</button>
                     </td>
                 </tr>
@@ -289,17 +299,23 @@ function addToCartFromWishlist(index) {
     const productId = wishlist[index];
     const product = getProductById(products, productId);
     
-    // Create a new cart item (you may need to adjust this based on your product structure)
+    if (product.type === 'exclusive' && sessionStorage.getItem(`unlocked_${product.id}`) !== 'true') {
+        alert("This exclusive item needs to be unlocked before adding to cart.");
+        return;
+    }
+    
+    // Create a new cart item
     const newCartItem = {
         productId: productId,
         quantity: 1,
         colorId: product.colors ? product.colors[0].id : null,
-        sizeId: product.sizes ? product.sizes[0].id : null
+        sizeId: product.sizes ? product.sizes[0].id : null,
+        appointmentDate: product.appointmentOptions ? null : undefined,
+        appointmentTime: product.appointmentOptions ? null : undefined
     };
 
     // Add to cart
-    cart.push(newCartItem);
-    saveCart();
+    pushItemToCart(newCartItem);
     
     // Remove from wishlist
     removeFromWishlist(index);
