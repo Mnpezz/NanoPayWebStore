@@ -3,7 +3,7 @@ function buildProductCols(products = []) {
     products.forEach(prod => {
         const productUrl = prod.type === 'exclusive' ? `product.html?id=${prod.id}&exclusive=true` : generateProductUrl(prod);
         const productImage = prod.type === 'exclusive' ? prod.images[0] : prod.images[0]; // Use blurred image for exclusive products
-        const productPrice = prod.type === 'exclusive' ? `Unlock for $${prod.unlockPrice.toFixed(2)}` : `$${prod.price.toFixed(2)}`;
+       const productPrice = `$${prod.price.toFixed(2)}`;
         
         str += `
             <div class="col-sm-6 col-md-3 mb-4">
