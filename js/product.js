@@ -75,8 +75,8 @@ function buildDetail(activeCart) {
 
         NanoPay.wall({ 
             element: '.premium',
-            title: 'Unlock Exclusive Product',
-            button: 'Unlock Product', 
+            title: 'Unlock Exclusive Products',
+            button: 'Unlock All Exclusive Products', 
             amount: product.unlockPrice,
             address: '@mnpezz',
             success: (block) => {
