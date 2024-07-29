@@ -1,7 +1,7 @@
 function buildProductCols(products = []) {
+    const allExclusiveUnlocked = localStorage.getItem('allExclusiveUnlocked') === 'true';
     let str = '';
     products.forEach(prod => {
-        const isUnlocked = localStorage.getItem(`unlocked_${prod.id}`) === 'true';
         const productUrl = `product.html?id=${prod.id}`;
         const productImage = prod.images[0];
         const productPrice = `$${prod.price.toFixed(2)}`;
@@ -10,10 +10,10 @@ function buildProductCols(products = []) {
             <div class="col-sm-6 col-md-3 mb-4">
                 <div class="product-item ${prod.type === 'exclusive' ? 'exclusive-product' : ''}" data-product-id="${prod.id}">
                     <a href="${productUrl}" class="product-link">
-                        <img src="${productImage}" alt="" class="img-fluid rounded-lg product-image mb-2 ${prod.type === 'exclusive' && !isUnlocked ? 'blurred' : ''}">
+                        <img src="${productImage}" alt="" class="img-fluid rounded-lg product-image mb-2 ${prod.type === 'exclusive' && !allExclusiveUnlocked ? 'blurred' : ''}">
                         <p class="text-center product-price">${productPrice}</p>
                         <p class="text-center product-name">${prod.name}</p>
-                        ${prod.type === 'exclusive' ? `<span class="exclusive-badge">${isUnlocked ? 'Exclusive!' : 'Exclusive'}</span>` : ''}
+                        ${prod.type === 'exclusive' ? `<span class="exclusive-badge">${allExclusiveUnlocked ? 'Exclusive!' : 'Exclusive'}</span>` : ''}
                     </a>
                 </div>
             </div>
@@ -22,14 +22,15 @@ function buildProductCols(products = []) {
     return str;
 }
 
-function updateUnlockedProducts(unlockedProductId) {
+function updateUnlockedProducts() {
+    const allExclusiveUnlocked = localStorage.getItem('allExclusiveUnlocked') === 'true';
+    
     products.forEach(prod => {
         if (prod.type === 'exclusive') {
-            const isUnlocked = sessionStorage.getItem(`unlocked_${prod.id}`) === 'true' || localStorage.getItem(`unlocked_${prod.id}`) === 'true' || prod.id === parseInt(unlockedProductId);
-            if (isUnlocked) {
-                const productItem = $(`.product-item[data-product-id="${prod.id}"]`);
+            const productItem = $(`.product-item[data-product-id="${prod.id}"]`);
+            if (allExclusiveUnlocked) {
                 productItem.find('.product-image').removeClass('blurred');
-                productItem.find('.exclusive-badge').text('Unlocked');
+                productItem.find('.exclusive-badge').text('Exclusive!');
                 
                 // Update product details if they exist
                 if (prod.colors) {
@@ -46,10 +47,6 @@ function updateUnlockedProducts(unlockedProductId) {
     });
 }
 
-// Listen for custom event 'productUnlocked'
-window.addEventListener('productUnlocked', function(event) {
-    updateUnlockedProducts(event.detail.productId);
-});
 
 $(() => {
     let productContainer = $("#productsContainer");
@@ -83,6 +80,18 @@ $(() => {
             $(`.product-item[data-product-id="${prod.id}"] .exclusive-badge`).text('Exclusive!');
         }
     });
+    if (localStorage.getItem('allExclusiveUnlocked') === 'true') {
+        updateUnlockedProducts();
+    }
+});
+
+window.addEventListener('allExclusiveUnlocked', function() {
+    updateUnlockedProducts();
+});
+
+// Listen for custom event 'productUnlocked'
+window.addEventListener('productUnlocked', function(event) {
+    updateUnlockedProducts(event.detail.productId);
 });
 
 window.addEventListener('message', function(event) {
