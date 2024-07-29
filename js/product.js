@@ -55,6 +55,75 @@ function buildCaro(activeCart) {
     }
 }
 
+function buildLeaseSelector(product, activeCart) {
+    const startDateInput = `
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Start Date:</span>
+            </div>
+            <input type="text" id="leaseStartDate" class="custom-select form-control date-input" placeholder="Select Start Date">
+        </div>
+    `;
+    const endDateInput = `
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">End Date:</span>
+            </div>
+            <input type="text" id="leaseEndDate" class="custom-select form-control date-input" placeholder="Select End Date">
+        </div>
+    `;
+
+    elements.productColors.html(startDateInput);
+    elements.productSizes.html(endDateInput);
+
+    // Initialize Flatpickr for both start and end dates
+    flatpickr("#leaseStartDate", {
+        minDate: "today",
+        onChange: function(selectedDates, dateStr) {
+            updateLeaseStartDate(dateStr);
+            updateLeasePrice();
+        }
+    });
+
+    flatpickr("#leaseEndDate", {
+        minDate: "today",
+        onChange: function(selectedDates, dateStr) {
+            updateLeaseEndDate(dateStr);
+            updateLeasePrice();
+        }
+    });
+}
+
+function updateLeaseStartDate(date) {
+    activeCart.leaseStartDate = date;
+}
+
+function updateLeaseEndDate(date) {
+    activeCart.leaseEndDate = date;
+}
+
+function updateLeasePrice() {
+    const product = getProductById(products, activeCart.productId);
+    if (activeCart.leaseStartDate && activeCart.leaseEndDate) {
+        const start = new Date(activeCart.leaseStartDate);
+        const end = new Date(activeCart.leaseEndDate);
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+        const totalPrice = product.basePrice * days;
+        activeCart.leaseDays = days; // Store the number of days
+        
+        if (days >= product.minDays && days <= product.maxDays) {
+            elements.itemPrice.html(`$${totalPrice.toFixed(2)} for ${days} days`);
+            elements.addToCartBtn.prop('disabled', false);
+        } else {
+            elements.itemPrice.html(`Please select between ${product.minDays} and ${product.maxDays} days`);
+            elements.addToCartBtn.prop('disabled', true);
+        }
+    } else {
+        elements.itemPrice.html(`Select start and end dates`);
+        elements.addToCartBtn.prop('disabled', true);
+    }
+}
+
 function buildDetail(activeCart) {
     const product = getProductById(products, activeCart.productId);
     const isExclusive = product.type === 'exclusive';
@@ -62,7 +131,12 @@ function buildDetail(activeCart) {
 
     elements.itemName.html(product.name);
     elements.itemDescription.html(isUnlocked ? (product.fullDescription || product.description) : product.description);
-    elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+
+    if (product.type === 'lease') {
+        elements.itemPrice.html(`$${product.basePrice.toFixed(2)} per day`);
+    } else {
+        elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+    }
 
     if (isExclusive && !isUnlocked) {
         activeCart.caroImgActive = 0;
@@ -90,6 +164,9 @@ function buildDetail(activeCart) {
     } else if (product.type === 'appointment') {
         revealProduct(product, activeCart);
         buildAppointmentSelector(product, activeCart);
+    } else if (product.type === 'lease') {
+        revealProduct(product, activeCart);
+        buildLeaseSelector(product, activeCart);
     } else {
         revealProduct(product, activeCart);
     }
@@ -221,7 +298,25 @@ function changeActiveImage(index) {
 function addToCart(e) {
     const product = getProductById(products, activeCart.productId);
 
-    if (product.colors && activeCart.colorId === null) {
+    if (product.type === 'lease') {
+        if (!activeCart.leaseStartDate || !activeCart.leaseEndDate) {
+            showTooltip(elements.productColors, "Select Start and End Dates!");
+            e.preventDefault();
+            return;
+        }
+
+        const start = new Date(activeCart.leaseStartDate);
+        const end = new Date(activeCart.leaseEndDate);
+        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+
+        if (days < product.minDays || days > product.maxDays) {
+            showTooltip(elements.productColors, `Lease duration must be between ${product.minDays} and ${product.maxDays} days!`);
+            e.preventDefault();
+            return;
+        }
+
+        activeCart.leaseDays = days;
+    } else if (product.colors && activeCart.colorId === null) {
         showTooltip(elements.productColors, "Select Color!");
         e.preventDefault();
         return;
@@ -246,7 +341,10 @@ function addToCart(e) {
         colorId: activeCart.colorId,
         sizeId: activeCart.sizeId,
         appointmentDate: activeCart.appointmentDate,
-        appointmentTime: activeCart.appointmentTime
+        appointmentTime: activeCart.appointmentTime,
+        leaseStartDate: activeCart.leaseStartDate,
+        leaseEndDate: activeCart.leaseEndDate,
+        leaseDays: activeCart.leaseDays
     };
 
     // Add the new item to the cart
@@ -353,6 +451,8 @@ let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
 
 $('#addToWishlistBtn').click(function() {
     const productId = activeCart.productId;
+    const product = getProductById(products, productId);
+    
     if (!wishlist.includes(productId)) {
         wishlist.push(productId);
         localStorage.setItem('wishlist', JSON.stringify(wishlist));
