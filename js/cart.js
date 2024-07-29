@@ -109,16 +109,18 @@ function buildCartBody() {
                         <p>${itemDetails}<button onclick="removeItemFromCart(${index})" type="button" class="btn btn-link">remove</button></p>
                     </td>
                     <td>
-                    ${prod.type === 'lease' ?
-                        `<p class="font-weight-bold">$${prod.basePrice.toFixed(2)} per day</p>` :
+                    ${prod.type === 'lease' || prod.type === 'appointment' ?
+                        `<p class="font-weight-bold">${prod.type === 'lease' ? 
+                            `$${prod.basePrice.toFixed(2)} per day` : 
+                            `$${prod.price.toFixed(2)} for appointment`}</p>` :
                         `<div class="form-inline">
-                        <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index}, ${item.quantity + 1}, ${prod.minQuantity}, ${prod.maxQuantity})">&uArr;</button>
+                            <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index}, ${item.quantity + 1}, ${prod.minQuantity}, ${prod.maxQuantity})">&uArr;</button>
                             <input onchange="changeParticularCartQuantity(${index}, this.value, ${prod.minQuantity}, ${prod.maxQuantity})" min="${prod.minQuantity}" max="${prod.maxQuantity}" type="number" class="form-control-sm form-control" style="width: 50px" value="${item.quantity}">
                             <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index}, ${item.quantity - 1}, ${prod.minQuantity}, ${prod.maxQuantity})">&dArr;</button>
                         </div>
                         <p class="font-weight-bold">@ $${prod.price.toFixed(2)} each</p>`
                     }
-                    </td>
+                </td>
                     <td><span class="font-weight-bold">$${totalPrice.toFixed(2)}</span></td>
                 </tr>
             `;
