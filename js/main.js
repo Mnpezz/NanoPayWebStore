@@ -269,10 +269,22 @@ function loadProducts() {
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwf9af7222/images/2020/1O001126_406_OF_ED.jpg?sw=1184&sh=1410&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw11cb504b/images/2020/1O001126_406_OF_D.jpg?sw=1184&sh=1410&sm=cut',
-                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw97f6e429/images/2020/1O001126_406_OF_D2.jpg?sw=1184&sh=1410&sm=cut',
-                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw8c1e979f/images/2020/1O001126_406_LD_B.jpg?sw=1184&sh=1410&sm=cut'
                 ]
             },
+            {
+                id: ++prodIds,
+                type: 'lease',
+                name: "Short-term Rental Item",
+                description: "This is a short-term rental item. Select your rental period to calculate the total price.",
+                fullDescription: "Enjoy our premium short-term rental item for your desired period. Perfect for temporary needs or trying before buying.",
+                basePrice: 0.01, // Price per day
+                minDays: 3,
+                maxDays: 60,
+                images: [
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw8c1e979f/images/2020/1O001126_406_LD_B.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw97f6e429/images/2020/1O001126_406_OF_D2.jpg?sw=1184&sh=1410&sm=cut',
+                ]
+            }
         ];
         
         saveItemToStore(pds, "products");
@@ -306,16 +318,22 @@ function saveCart() {
 }
 
 function pushItemToCart(item) {
-    let existingItem = cart.find(cItem => 
-        item.productId === cItem.productId && 
-        item.colorId === cItem.colorId && 
-        item.sizeId === cItem.sizeId
-    );
-
-    if (existingItem) {
-        existingItem.quantity += item.quantity;
-    } else {
+    const product = getProductById(products, item.productId);
+    if (product.type === 'lease') {
+        // For lease items, always add as a new item
         cart.push(item);
+    } else {
+        let existingItem = cart.find(cItem => 
+            item.productId === cItem.productId && 
+            (item.colorId === cItem.colorId) &&
+            (item.sizeId === cItem.sizeId)
+        );
+
+        if (existingItem) {
+            existingItem.quantity += item.quantity;
+        } else {
+            cart.push(item);
+        }
     }
 
     saveCart();
