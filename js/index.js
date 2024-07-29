@@ -4,8 +4,13 @@ function buildProductCols(products = []) {
     products.forEach(prod => {
         const productUrl = `product.html?id=${prod.id}`;
         const productImage = prod.images[0];
-        const productPrice = `$${prod.price.toFixed(2)}`;
-        
+        let productPrice;
+        if (prod.type === 'lease') {
+            productPrice = `$${prod.basePrice.toFixed(2)} per day`;
+        } else {
+            productPrice = `$${prod.price.toFixed(2)}`;
+        }
+
         str += `
             <div class="col-sm-6 col-md-3 mb-4">
                 <div class="product-item ${prod.type === 'exclusive' ? 'exclusive-product' : ''}" data-product-id="${prod.id}">
