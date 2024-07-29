@@ -33,9 +33,6 @@ function buildThumbNail(activeCart) {
     elements.thumbnailHolder.html(thumbnails).show(); // Show the thumbnail holder
 }
 
-
-
-
 function buildCaro(activeCart) {
     const product = getProductById(products, activeCart.productId);
     const isExclusive = product.type === 'exclusive';
@@ -64,11 +61,10 @@ function buildDetail(activeCart) {
     const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
 
     elements.itemName.html(product.name);
-    elements.itemDescription.html(product.description);
+    elements.itemDescription.html(isUnlocked ? (product.fullDescription || product.description) : product.description);
     elements.itemPrice.html(`$${product.price.toFixed(2)}`);
 
     if (isExclusive && !isUnlocked) {
-        // Exclusive product logic (unchanged)
         activeCart.caroImgActive = 0;
         buildCaro(activeCart);
         elements.thumbnailHolder.empty().hide();
@@ -77,24 +73,33 @@ function buildDetail(activeCart) {
             element: '.premium',
             title: 'Unlock Exclusive Products',
             button: 'Unlock All Exclusive Products', 
-            amount: product.unlockPrice,
+            amount: unlockPrice,
             address: '@mnpezz',
             success: (block) => {
                 sessionStorage.setItem(`unlocked_${product.id}`, 'true');
-                alert("Product unlocked! The page will refresh to show the full product details.");
+                localStorage.setItem(`unlocked_${product.id}`, 'true'); // Update localStorage
+
+                // Dispatch a custom event
+                window.dispatchEvent(new CustomEvent('productUnlocked', { detail: { productId: product.id } }));
+
+                revealProduct(product, activeCart);
+                updateMainPage(product.id);
                 location.reload();
             }
         });
     } else if (product.type === 'appointment') {
-        // Appointment product logic
         revealProduct(product, activeCart);
         buildAppointmentSelector(product, activeCart);
     } else {
-        // Regular product logic
         revealProduct(product, activeCart);
     }
 }
 
+function updateMainPage(productId) {
+    if (window.opener && !window.opener.closed) {
+        window.opener.postMessage({ type: 'productUnlocked', productId: productId }, '*');
+    }
+}
 
 function buildAppointmentSelector(product, activeCart) {
     const dateInput = `
@@ -129,8 +134,6 @@ function buildAppointmentSelector(product, activeCart) {
         }
     });
 }
-
-
 
 function updateAppointmentDate(date) {
     activeCart.appointmentDate = date;
@@ -211,28 +214,25 @@ function changeActiveImage(index) {
     $('#productImagesCarousel').carousel(index); // Update the carousel to the clicked thumbnail
 }
 
-
 function addToCart(e) {
     const product = getProductById(products, activeCart.productId);
 
-    if (product.type === 'regular') {
-        if (product.colors && activeCart.colorId === null) {
-            showTooltip(elements.productColors, "Select Color!");
-            e.preventDefault();
-            return;
-        }
+    if (product.colors && activeCart.colorId === null) {
+        showTooltip(elements.productColors, "Select Color!");
+        e.preventDefault();
+        return;
+    }
 
-        if (product.sizes && activeCart.sizeId === null) {
-            showTooltip(elements.productSizes, "Select Size!");
-            e.preventDefault();
-            return;
-        }
-    } else if (product.type === 'appointment') {
-        if (!activeCart.appointmentDate || !activeCart.appointmentTime) {
-            showTooltip(elements.productColors, "Select Date and Time!");
-            e.preventDefault();
-            return;
-        }
+    if (product.sizes && activeCart.sizeId === null) {
+        showTooltip(elements.productSizes, "Select Size!");
+        e.preventDefault();
+        return;
+    }
+
+    if (product.availableDates && (!activeCart.appointmentDate || !activeCart.appointmentTime)) {
+        showTooltip(elements.productColors, "Select Date and Time!");
+        e.preventDefault();
+        return;
     }
 
     // Create a new cart item
@@ -395,16 +395,12 @@ function revealProduct(product, activeCart) {
     }
 
     // Build colors, sizes, and quantity selector based on product type
-    if (product.type === 'regular') {
+    if (product.type === 'regular' || (product.type === 'exclusive' && (product.colors || product.sizes))) {
         if (product.colors) buildColors(product, activeCart);
         if (product.sizes) buildSizes(product, activeCart);
         buildQuantity(activeCart);
-    } else if (product.type === 'appointment') {
-        // Clear color and size selectors for appointment products
-        elements.productColors.empty();
-        elements.productSizes.empty();
-        elements.selectedColor.empty();
-        elements.selectedSize.empty();
+    } else if (product.type === 'appointment' || (product.type === 'exclusive' && product.availableDates)) {
+        buildAppointmentSelector(product, activeCart);
     }
 
     // Update the button
@@ -413,12 +409,9 @@ function revealProduct(product, activeCart) {
     // Show the premium content
     $('.premium').show();
 
-    // Remove the NanoPay wall if it exists
-    if (typeof NanoPay !== 'undefined' && NanoPay.remove) {
-        NanoPay.remove();
-    }
+    // Remove blur from images
+    $('.carousel-item img').removeClass('blurred');
 }
-
 
 // Initialization on page load
 $(function() {
