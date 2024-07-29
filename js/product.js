@@ -77,10 +77,10 @@ function buildDetail(activeCart) {
             address: '@mnpezz',
             success: (block) => {
                 sessionStorage.setItem(`unlocked_${product.id}`, 'true');
-                localStorage.setItem(`unlocked_${product.id}`, 'true'); // Update localStorage
-
+                localStorage.setItem('allExclusiveUnlocked', 'true');
+        
                 // Dispatch a custom event
-                window.dispatchEvent(new CustomEvent('productUnlocked', { detail: { productId: product.id } }));
+                window.dispatchEvent(new CustomEvent('allExclusiveUnlocked'));
 
                 revealProduct(product, activeCart);
                 updateMainPage(product.id);
