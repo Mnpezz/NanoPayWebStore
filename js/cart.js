@@ -65,6 +65,7 @@ function validateCoupon(code) {
     return discountCodes.hasOwnProperty(code);
 }
 
+// Update the buildCartBody function
 function buildCartBody() {
     let str = '';
     let counter = 1;
@@ -77,17 +78,14 @@ function buildCartBody() {
             let maxQuantity = prod.maxQuantity || 100;
 
             let itemDetails = '';
-            if (prod.type === 'regular' || prod.type === 'exclusive') {
+            if (prod.colors || prod.sizes || prod.availableDates) {
                 let selectedColor = prod.colors ? prod.colors.find(color => color.id === item.colorId) : null;
                 let selectedSize = prod.sizes ? prod.sizes.find(size => size.id === item.sizeId) : null;
                 itemDetails = `
                     ${selectedColor ? `<span class="font-weight-bold">Color:</span> <span>${selectedColor.name}</span> | ` : ''}
                     ${selectedSize ? `<span class="font-weight-bold">Size: </span><span>${selectedSize.name}</span> | ` : ''}
-                `;
-            } else if (prod.type === 'appointment') {
-                itemDetails = `
-                    <span class="font-weight-bold">Date:</span> <span>${item.appointmentDate}</span> | 
-                    <span class="font-weight-bold">Time: </span><span>${item.appointmentTime}</span> | 
+                    ${item.appointmentDate ? `<span class="font-weight-bold">Date:</span> <span>${item.appointmentDate}</span> | ` : ''}
+                    ${item.appointmentTime ? `<span class="font-weight-bold">Time: </span><span>${item.appointmentTime}</span> | ` : ''}
                 `;
             }
 
@@ -150,10 +148,14 @@ function initiatePayment() {
         let itemTotal = itemPrice * item.quantity;
         
         let itemDetails = '';
-        if (prod.type === 'regular') {
+        if (prod.type === 'regular' || prod.type === 'exclusive') {
             let selectedColor = prod.colors ? prod.colors.find(color => color.id === item.colorId) : null;
             let selectedSize = prod.sizes ? prod.sizes.find(size => size.id === item.sizeId) : null;
             itemDetails = `${selectedColor ? `Color: ${selectedColor.name}, ` : ''}${selectedSize ? `Size: ${selectedSize.name}` : ''}`;
+            
+            if (prod.availableDates && item.appointmentDate && item.appointmentTime) {
+                itemDetails += `${itemDetails ? ', ' : ''}Date: ${item.appointmentDate}, Time: ${item.appointmentTime}`;
+            }
         } else if (prod.type === 'appointment') {
             itemDetails = `Date: ${item.appointmentDate}, Time: ${item.appointmentTime}`;
         }
