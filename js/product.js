@@ -173,8 +173,12 @@ function buildSizes(product, activeCart) {
 
 function buildQuantity(activeCart) {
     const product = getProductById(products, activeCart.productId);
+    if (!product) {
+        console.error('Product not found:', activeCart.productId);
+        return;
+    }
     const minQuantity = product.minQuantity || 1;
-    const maxQuantity = product.maxQuantity || 100;
+    const maxQuantity = product.maxQuantity || 1000;
 
     activeCart.quantity = Math.max(minQuantity, activeCart.quantity);
 
