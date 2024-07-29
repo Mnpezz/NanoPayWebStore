@@ -153,7 +153,6 @@ function buildDetail(activeCart) {
                 sessionStorage.setItem(`unlocked_${product.id}`, 'true');
                 localStorage.setItem('allExclusiveUnlocked', 'true');
         
-                // Dispatch a custom event
                 window.dispatchEvent(new CustomEvent('allExclusiveUnlocked'));
 
                 revealProduct(product, activeCart);
@@ -167,6 +166,8 @@ function buildDetail(activeCart) {
     } else if (product.type === 'lease') {
         revealProduct(product, activeCart);
         buildLeaseSelector(product, activeCart);
+        // Hide quantity selector for lease products
+        elements.qtyHolder.hide();
     } else {
         revealProduct(product, activeCart);
     }
@@ -356,6 +357,7 @@ function addToCart(e) {
     resetActiveCart();
 
     alert("Item added to cart!");
+    location.reload();
 }
 
 function resetActiveCart() {
@@ -503,8 +505,13 @@ function revealProduct(product, activeCart) {
         if (product.colors) buildColors(product, activeCart);
         if (product.sizes) buildSizes(product, activeCart);
         buildQuantity(activeCart);
+        elements.qtyHolder.show(); // Make sure quantity selector is visible for these types
     } else if (product.type === 'appointment' || (product.type === 'exclusive' && product.availableDates)) {
         buildAppointmentSelector(product, activeCart);
+        elements.qtyHolder.hide(); // Hide quantity selector for appointment types
+    } else if (product.type === 'lease') {
+        buildLeaseSelector(product, activeCart);
+        elements.qtyHolder.hide(); // Hide quantity selector for lease types
     }
 
     // Update the button
