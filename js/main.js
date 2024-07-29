@@ -275,9 +275,8 @@ function loadProducts() {
                 id: ++prodIds,
                 type: 'lease',
                 name: "Short-term Rental Item",
-                description: "This is a short-term rental item. Select your rental period to calculate the total price.",
-                fullDescription: "Enjoy our premium short-term rental item for your desired period. Perfect for temporary needs or trying before buying.",
-                basePrice: 0.01, // Price per day
+                fullDescription: "Enjoy our premium short-term rental item for your desired period. Please select between 3 and 60 days.",
+                basePrice: 0.02, // Price per day
                 minDays: 3,
                 maxDays: 60,
                 images: [
