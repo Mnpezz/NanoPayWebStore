@@ -53,14 +53,13 @@ function loadProducts() {
     if (hasStoredData()) {
         products = getItemFromStore('products');
     } else {
-        // Add product data here (removed for brevity)
         let pds = [
             {
                 id: ++prodIds,
                 type: 'regular',
                 name: "Size only item",
                 description: "This item has no color option with a 5 minimum and 10 max..",
-                price: 0.02,
+                price: 0.01,
                 sizes: [
                     { id: ++sizeIds, name: 'S' },
                     { id: ++sizeIds, name: 'M' },
@@ -102,7 +101,7 @@ function loadProducts() {
                 type: 'regular',
                 name: "Both Color and Size",
                 description: "There's warm, and then there's vineyard vines warm...",
-                price: 0.02,
+                price: 0.03,
                 colors: [
                     { id: ++colsIds, hash: "#D50000", name: "Red" },
                     { id: ++colsIds, hash: "#4CAF50", name: "Green" },
@@ -129,9 +128,9 @@ function loadProducts() {
                 name: "Color and Size Exclusive Product",
                 description: "This is a preview of our exclusive product. Additional pictures and ability to add item to cart enabled immediatly after unlock payment is made",
                 fullDescription: "This is the full description of our exclusive product, only visible after unlocking.",
-                price: 0.02,
+                price: 0.04,
                 minQuantity: 1,
-                maxQuantity: 1,
+                maxQuantity: 100,
                 // blur or censor your own image and place it first. the image will be blurred out but that can be simply bypassed for the first image. all additional images will be visible only after unlock paymnet is made. 
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw24fbddf1/images/2020/1V013893_025_LD_B.jpg?sw=1184&sh=1410&sm=cut',
@@ -155,7 +154,7 @@ function loadProducts() {
                 type: 'appointment',
                 name: "Consultation Session",
                 description: "Book a consultation session with our experts.",
-                price: 0.01,
+                price: 0.04,
                 availableDates: [
                     "2024-07-16", "2024-07-18",
                     "2024-07-23", "2024-07-25",
@@ -201,7 +200,7 @@ function loadProducts() {
                 name: "Exclusive Consultation Session",
                 description: "This is a preview of our exclusive product. Additional pictures and ability to add item to cart enabled immediatly after unlock payment is made",
                 fullDescription: "This is the full description of our exclusive product, only visible after unlocking.",
-                price: 0.02,
+                price: 0.08,
                 availableDates: [
                     "2024-07-16", "2024-07-18",
                     "2024-07-23", "2024-07-25",
@@ -246,9 +245,9 @@ function loadProducts() {
                 name: "Regular Exclusive Product",
                 description: "This is a preview of our regular exclusive product. Additional pictures and ability to add item to cart enabled immediatly after unlock payment is made",
                 fullDescription: "This is the full description of our exclusive product, only visible after unlocking.",
-                price: 0.02,
+                price: 0.04,
                 minQuantity: 1,
-                maxQuantity: 1,
+                maxQuantity: 100,
                 // blur or censor your own image and place it first. the image will be blurred out but that can be simply bypassed for the first image. all additional images will be visible only after unlock paymnet is made. 
                 images: [
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw0563da3a/images/2020/1V013893_893_LD_B.jpg?sw=1680&sh=2000&sm=cut',
@@ -257,6 +256,21 @@ function loadProducts() {
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw09ee4d53/images/2020/1V013893_456_LD_B.jpg?sw=1184&sh=1410&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw7204be03/images/2020/1V013893_100_LD_B.jpg?sw=1680&sh=2000&sm=cut',
                     'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw09a49167/images/2020/1V013893_964_LD_F.jpg?sw=1184&sh=1410&sm=cut'
+                ]
+            },
+            {
+                id: ++prodIds,
+                type: 'regular',
+                name: "Regular no attribute product",
+                description: "This item has no size or color option with a 1 minimum and 100 max..",
+                price: 0.02,
+                minQuantity: 1,
+                maxQuantity: 100,
+                images: [
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dwf9af7222/images/2020/1O001126_406_OF_ED.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw11cb504b/images/2020/1O001126_406_OF_D.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw97f6e429/images/2020/1O001126_406_OF_D2.jpg?sw=1184&sh=1410&sm=cut',
+                    'https://www.vineyardvines.com/dw/image/v2/AAHW_PRD/on/demandware.static/-/Sites-vineyardvines-master/default/dw8c1e979f/images/2020/1O001126_406_LD_B.jpg?sw=1184&sh=1410&sm=cut'
                 ]
             },
         ];
