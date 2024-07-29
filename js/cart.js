@@ -35,7 +35,12 @@ function calculateSubTotal() {
     let subTotal = 0;
     cart.forEach(item => {
         let prod = getProductById(products, item.productId);
-        subTotal += parseInt(item.quantity) * parseFloat(prod.price);
+        if (prod.type === 'lease') {
+            const days = item.leaseDays || item.quantity;
+            subTotal += days * parseFloat(prod.basePrice);
+        } else {
+            subTotal += parseInt(item.quantity) * parseFloat(prod.price);
+        }
     });
     return subTotal;
 }
@@ -73,12 +78,18 @@ function buildCartBody() {
     if (cart.length > 0) {
         cart.forEach((item, index) => {
             let prod = getProductById(products, item.productId);
-            let totalPrice = parseInt(item.quantity) * parseFloat(prod.price);
-            let minQuantity = prod.minQuantity || 1;
-            let maxQuantity = prod.maxQuantity || 100;
-
+            let totalPrice;
             let itemDetails = '';
-            if (prod.colors || prod.sizes || prod.availableDates) {
+            if (prod.type === 'lease') {
+                const days = item.leaseDays || item.quantity; // Use leaseDays if available, otherwise fallback to quantity
+                totalPrice = prod.basePrice * days;
+                itemDetails = `
+                    <span class="font-weight-bold">Start Date:</span> <span>${item.leaseStartDate}</span> | 
+                    <span class="font-weight-bold">End Date:</span> <span>${item.leaseEndDate}</span> | 
+                    <span class="font-weight-bold">Duration:</span> <span>${days} days</span> | 
+                `;
+            } else {
+                totalPrice = parseInt(item.quantity) * parseFloat(prod.price);
                 let selectedColor = prod.colors ? prod.colors.find(color => color.id === item.colorId) : null;
                 let selectedSize = prod.sizes ? prod.sizes.find(size => size.id === item.sizeId) : null;
                 itemDetails = `
@@ -98,12 +109,15 @@ function buildCartBody() {
                         <p>${itemDetails}<button onclick="removeItemFromCart(${index})" type="button" class="btn btn-link">remove</button></p>
                     </td>
                     <td>
-                        <div class="form-inline">
-                            <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index}, ${item.quantity - 1}, ${minQuantity}, ${maxQuantity})">&dArr;</button>
-                            <input onchange="changeParticularCartQuantity(${index}, this.value, ${minQuantity}, ${maxQuantity})" min="${minQuantity}" max="${maxQuantity}" type="number" class="form-control-sm form-control" style="width: 50px" value="${item.quantity}">
-                            <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index}, ${item.quantity + 1}, ${minQuantity}, ${maxQuantity})">&uArr;</button>
+                    ${prod.type === 'lease' ?
+                        `<p class="font-weight-bold">$${prod.basePrice.toFixed(2)} per day</p>` :
+                        `<div class="form-inline">
+                        <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index}, ${item.quantity + 1}, ${prod.minQuantity}, ${prod.maxQuantity})">&uArr;</button>
+                            <input onchange="changeParticularCartQuantity(${index}, this.value, ${prod.minQuantity}, ${prod.maxQuantity})" min="${prod.minQuantity}" max="${prod.maxQuantity}" type="number" class="form-control-sm form-control" style="width: 50px" value="${item.quantity}">
+                            <button class="btn btn-sm" onclick="changeParticularCartQuantity(${index}, ${item.quantity - 1}, ${prod.minQuantity}, ${prod.maxQuantity})">&dArr;</button>
                         </div>
-                        <p class="font-weight-bold">@ $${prod.price.toFixed(2)} each</p>
+                        <p class="font-weight-bold">@ $${prod.price.toFixed(2)} each</p>`
+                    }
                     </td>
                     <td><span class="font-weight-bold">$${totalPrice.toFixed(2)}</span></td>
                 </tr>
@@ -144,11 +158,17 @@ function initiatePayment() {
 
     const cartItems = cart.map(item => {
         let prod = getProductById(products, item.productId);
-        let itemPrice = parseFloat(prod.price);
-        let itemTotal = itemPrice * item.quantity;
+        let itemPrice, itemTotal, itemQuantity;
         
-        let itemDetails = '';
-        if (prod.type === 'regular' || prod.type === 'exclusive') {
+        if (prod.type === 'lease') {
+            itemPrice = parseFloat(prod.basePrice);
+            itemQuantity = item.leaseDays || item.quantity;
+            itemTotal = itemPrice * itemQuantity;
+            itemDetails = `Start Date: ${item.leaseStartDate}, End Date: ${item.leaseEndDate}, Duration: ${itemQuantity} days`;
+        } else {
+            itemPrice = parseFloat(prod.price);
+            itemTotal = itemPrice * item.quantity;
+
             let selectedColor = prod.colors ? prod.colors.find(color => color.id === item.colorId) : null;
             let selectedSize = prod.sizes ? prod.sizes.find(size => size.id === item.sizeId) : null;
             itemDetails = `${selectedColor ? `Color: ${selectedColor.name}, ` : ''}${selectedSize ? `Size: ${selectedSize.name}` : ''}`;
@@ -156,13 +176,11 @@ function initiatePayment() {
             if (prod.availableDates && item.appointmentDate && item.appointmentTime) {
                 itemDetails += `${itemDetails ? ', ' : ''}Date: ${item.appointmentDate}, Time: ${item.appointmentTime}`;
             }
-        } else if (prod.type === 'appointment') {
-            itemDetails = `Date: ${item.appointmentDate}, Time: ${item.appointmentTime}`;
         }
         
         return {
-            name: `${prod.name}: ${item.quantity} <br> ${itemDetails} <br>`,
-            quantity: item.quantity,
+            name: `${prod.name}: ${itemQuantity} ${prod.type === 'lease' ? 'days' : ''} <br> ${itemDetails} <br>`,
+            quantity: itemQuantity,
             price: itemPrice.toFixed(2)
         };
     });
@@ -266,17 +284,32 @@ function loadWishlist() {
             }
             const isExclusive = prod.type === 'exclusive';
             const isUnlocked = sessionStorage.getItem(`unlocked_${prod.id}`) === 'true';
-            const addToCartButton = isExclusive && !isUnlocked ?
-                `<button class="btn btn-secondary btn-sm" disabled>Unlock Required</button>` :
-                `<button onclick="addToCartFromWishlist(${index})" class="btn btn-primary btn-sm">Add to Cart</button>`;
+            const needsSelection = prod.type === 'lease' || prod.colors || prod.sizes || prod.appointmentOptions || (prod.availableDates && prod.availableTimes);
+            
+            let addToCartButton;
+            if (isExclusive && !isUnlocked) {
+                addToCartButton = `<button class="btn btn-secondary btn-sm" disabled>Unlock Required</button>`;
+            } else if (needsSelection) {
+                addToCartButton = `<button onclick="addToCartFromWishlist(${index})" class="btn btn-primary btn-sm">View Product</button>`;
+            } else {
+                addToCartButton = `<button onclick="addToCartFromWishlist(${index})" class="btn btn-primary btn-sm">Add to Cart</button>`;
+            }
+            
+            let priceDisplay;
+            if (prod.type === 'lease') {
+                priceDisplay = `$${prod.basePrice.toFixed(2)} per day`;
+            } else {
+                priceDisplay = `$${prod.price.toFixed(2)}`;
+            }
             
             str += `
                 <tr>
                     <td><img width="60px" class="img-thumbnail" src="${prod.images[0]}" alt="${prod.name}"></td>
                     <td>
                         <p class="font-weight-bold"><a href="${generateProductUrl(prod)}">${prod.name}</a></p>
+                        
                     </td>
-                    <td>$${prod.price.toFixed(2)}</td>
+                    <td>${priceDisplay}</td>
                     <td>
                         ${addToCartButton}
                         <button onclick="removeFromWishlist(${index})" class="btn btn-danger btn-sm">Remove</button>
@@ -315,6 +348,12 @@ function addToCartFromWishlist(index) {
         appointmentDate: product.appointmentOptions ? null : undefined,
         appointmentTime: product.appointmentOptions ? null : undefined
     };
+
+    // For lease items, redirect to the product page for date selection
+    if (product.type === 'lease') {
+        window.location.href = `product.html?id=${productId}`;
+        return;
+    }
 
     // Add to cart
     pushItemToCart(newCartItem);
