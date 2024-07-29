@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="img/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="img/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="img/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="img/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="img/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="img/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="img/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="img/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="img/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="img/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/favicon-16x16.png">
+    <link rel="manifest" href="img/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <title>WebStore!</title>
+    <style>
+        html, body {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: lightgray;
+        }
+
+        .containerWall {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: lightgray;
+            font-family: Arial, sans-serif;
+        }
+
+        .card {
+            margin: 20px;
+        }
+
+        .submit-card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .card-body {
+            max-width: 600px;
+            padding: 20px;
+            margin: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .article-preview {
+            max-width: 600px;
+            padding: 20px;
+            margin: 20px auto;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .article-preview h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .article-preview p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <div id="app" class="container mt-4">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>Known Nano Web Stores</h1>
+                <p>Mnpezz manages this main list on Github manually.<br>If people send their link via the form I will add them.<br>I don't necessarily advocate for any store on this list.</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card submit-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Submit Your Store</h5>
+                        <div class="form-group">
+                            <input type="url" class="form-control" id="storeUrlInput" placeholder="Enter your store URL">
+                        </div>
+                        <button onclick="submitStore()" class="btn btn-primary">Submit and Pay ($1)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">There are no stores at this time</h5>
+                        <a href="https://github.com/" class="card-link">website.website.com</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Placeholder</h5>
+                        <a href="https://github.com/" class="card-link">website.website.com</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+    <script src="https://pay.nano.to/latest.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+    <script src="js/main.js" type="text/javascript"></script>
+    <script src="js/index.js" type="text/javascript"></script>
+    <script>
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;  
+            }
+        }
+
+        function submitStore() {
+            const storeUrl = document.getElementById('storeUrlInput').value;
+            if (!storeUrl || !isValidUrl(storeUrl)) {
+                alert("Please enter a valid URL");
+                return;
+            }
+
+            NanoPay.open({
+                address: '@mnpezz',
+                notify: 'mnpezz@gmail.com',
+                contact: false,
+                shipping: false,
+                currency: 'USD',
+                line_items: [
+                    {
+                        name: "Store Submission",
+                        quantity: 1,
+                        price: "1.00"
+                    }
+                ],
+                note: `Submitted store URL: ${storeUrl}`,
+                success: (block) => {
+                    alert("Payment successful! Your store URL has been submitted.");
+                    document.getElementById('storeUrlInput').value = '';
+                },
+                cancel: () => {
+                    alert("Payment cancelled");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
