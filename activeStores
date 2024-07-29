@@ -96,13 +96,13 @@
         <div class="row">
             <div class="col-12 text-center">
                 <h1>Known Nano Web Stores</h1>
-                <p>Mnpezz manages this main list on Github manually.<br>If people send their link via the form I will add them.<br>I don't necessarily advocate for any store on this list.</p>
+                <p>Mnpezz manages this main list on Github manually.<br>If people send me their link via the form I will add them.<br>I don't necessarily advocate for any store on this list.</p>
             </div>
         </div>
 
         <div class="row justify-content-center">
             <div class="col-md-6">
-                <div class="card submit-card">
+                <div class="submit-card">
                     <div class="card-body">
                         <h5 class="card-title">Submit Your Store</h5>
                         <div class="form-group">
@@ -116,19 +116,15 @@
 
         <div class="row mt-4">
             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">There are no stores at this time</h5>
-                        <a href="https://github.com/" class="card-link">website.website.com</a>
-                    </div>
+                <div class="card-body">
+                    <h5 class="card-title">There are no stores at this time</h5>
+                    <a href="https://github.com/" class="card-link">website.website.com</a>
                 </div>
             </div>
             <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Placeholder</h5>
-                        <a href="https://github.com/" class="card-link">website.website.com</a>
-                    </div>
+                <div class="card-body">
+                    <h5 class="card-title">Placeholder</h5>
+                    <a href="https://github.com/" class="card-link">website.website.com</a>
                 </div>
             </div>
         </div>
