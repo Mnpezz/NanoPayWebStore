@@ -284,24 +284,17 @@ function loadWishlist() {
                 console.error(`Product with id ${productId} not found`);
                 return;
             }
-            const isExclusive = prod.type === 'exclusive';
+            const isExclusive = prod.type === 'exclusive' || (prod.type === 'lease' && prod.exclusive);
             const isUnlocked = sessionStorage.getItem(`unlocked_${prod.id}`) === 'true';
-            const needsSelection = prod.type === 'lease' || prod.colors || prod.sizes || prod.appointmentOptions || (prod.availableDates && prod.availableTimes);
-            
-            let addToCartButton;
-            if (isExclusive && !isUnlocked) {
-                addToCartButton = `<button class="btn btn-secondary btn-sm" disabled>Unlock Required</button>`;
-            } else if (needsSelection) {
-                addToCartButton = `<button onclick="addToCartFromWishlist(${index})" class="btn btn-primary btn-sm">View Product</button>`;
-            } else {
-                addToCartButton = `<button onclick="addToCartFromWishlist(${index})" class="btn btn-primary btn-sm">Add to Cart</button>`;
-            }
+            const addToCartButton = isExclusive && !isUnlocked ?
+                `<button class="btn btn-secondary btn-sm" disabled>Unlock Required</button>` :
+                `<button onclick="addToCartFromWishlist(${index})" class="btn btn-primary btn-sm">View Product</button>`;
             
             let priceDisplay;
             if (prod.type === 'lease') {
-                priceDisplay = `$${prod.basePrice.toFixed(2)} per day`;
+                priceDisplay = isUnlocked ? `$${prod.basePrice.toFixed(2)} per day` : `$${prod.basePrice.toFixed(2)} per day`;
             } else {
-                priceDisplay = `$${prod.price.toFixed(2)}`;
+                priceDisplay = isUnlocked ? `$${prod.price.toFixed(2)}` : `$${prod.price.toFixed(2)}`;
             }
             
             str += `
