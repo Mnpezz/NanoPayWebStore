@@ -11,14 +11,6 @@ let wishlistBody = $("#wishlistBody");
 let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
 
 
-let taxRate = 0.0945; // 9.45% sales tax
-
-const discountCodes = {
-    "sale50": 0.5,  // 50% discount
-    "sale10": 0.1,  // 10% discount
-    "sale20": 0.2   // 20% discount
-};
-
 function reloadOrderTotal() {
     let itemCount = cart.length;
     let itemWord = itemCount > 1 ? "Items" : "Item";
