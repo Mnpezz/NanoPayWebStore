@@ -35,14 +35,14 @@ function buildThumbNail(activeCart) {
 
 function buildCaro(activeCart) {
     const product = getProductById(products, activeCart.productId);
-    const isExclusive = product.type === 'exclusive' || (product.type === 'lease' && product.exclusive);
+    const isExclusive = product.exclusive;
     const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
 
     let imagesToShow = isExclusive && !isUnlocked ? product.images.slice(0, 1) : product.images;
 
     const carouselItems = imagesToShow.map((image, index) => `
         <div class="carousel-item ${index === 0 ? 'active' : ''}">
-            <img src="${image}" class="d-block w-100 ${isExclusive && !isUnlocked && index === 0 ? 'blurred' : ''}" alt="${product.name}">
+            <img src="${image}" class="d-block w-100 ${isExclusive && !isUnlocked ? 'blurred' : ''}" alt="${product.name}">
         </div>
     `).join('');
 
@@ -159,13 +159,6 @@ function buildDetail(activeCart) {
                 location.reload();
             }
         });
-    } else if (product.type === 'appointment') {
-        revealProduct(product, activeCart);
-        buildAppointmentSelector(product, activeCart);
-    } else if (product.type === 'lease') {
-        revealProduct(product, activeCart);
-        buildLeaseSelector(product, activeCart);
-        elements.qtyHolder.hide();
     } else {
         revealProduct(product, activeCart);
     }
@@ -543,7 +536,7 @@ $(function() {
     };
 
     const product = getProductById(products, productId);
-    if (product.type === 'exclusive') {
+    if (product.exclusive) {
         if (sessionStorage.getItem(`unlocked_${product.id}`) === 'true') {
             revealProduct(product, activeCart);
         } else {
