@@ -126,19 +126,18 @@ function updateLeasePrice() {
 
 function buildDetail(activeCart) {
     const product = getProductById(products, activeCart.productId);
-    const isExclusive = product.type === 'exclusive' || (product.type === 'lease' && product.exclusive);
     const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
 
     elements.itemName.html(product.name);
     elements.itemDescription.html(isUnlocked ? (product.fullDescription || product.description) : product.description);
 
     if (product.type === 'lease') {
-        elements.itemPrice.html(isUnlocked ? `$${product.basePrice.toFixed(2)} per day` : `$${product.basePrice.toFixed(2)} per day`);
+        elements.itemPrice.html(isUnlocked || !product.exclusive ? `$${product.basePrice.toFixed(2)} per day` : `$${product.basePrice.toFixed(2)} per day`);
     } else {
-        elements.itemPrice.html(isUnlocked ? `$${product.price.toFixed(2)}` : `$${product.price.toFixed(2)}`);
+        elements.itemPrice.html(isUnlocked || !product.exclusive ? `$${product.price.toFixed(2)}` : `$${product.price.toFixed(2)}`);
     }
 
-    if (isExclusive && !isUnlocked) {
+    if (product.exclusive && !isUnlocked) {
         activeCart.caroImgActive = 0;
         buildCaro(activeCart);
         elements.thumbnailHolder.empty().hide();
