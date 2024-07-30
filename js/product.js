@@ -204,7 +204,7 @@ function buildAppointmentSelector(product, activeCart) {
     // Initialize Flatpickr
     flatpickr("#appointmentDate", {
         enable: product.availableDates,
-        dateFormat: "Y-m-d",
+        dateFormat: "YYYY-MM-DD",
         onChange: function(selectedDates, dateStr) {
             updateAppointmentDate(dateStr);
         }
@@ -477,18 +477,21 @@ function loadRelatedProducts(productId) {
         .sort(() => 0.5 - Math.random())
         .slice(0, 3);
 
-    const productsHtml = relatedProducts.map(product => `
-        <div class="col-6 col-md-4">
-            <div class="card">
-                <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
-                <div class="card-body">
-                    <h5 class="card-title">${product.name}</h5>
-                    <p class="card-text">$${product.price.toFixed(2)}</p>
-                    <a href="product.html?id=${product.id}" class="btn btn-primary">View Product</a>
+    const productsHtml = relatedProducts.map(product => {
+        const price = product.type === 'lease' ? product.basePrice : product.price;
+        return `
+            <div class="col-6 col-md-4">
+                <div class="card">
+                    <img src="${product.images[0]}" class="card-img-top" alt="${product.name}">
+                    <div class="card-body">
+                        <h5 class="card-title">${product.name}</h5>
+                        <p class="card-text">${product.type === 'lease' ? `$${price.toFixed(2)} per day` : `$${price.toFixed(2)}`}</p>
+                        <a href="product.html?id=${product.id}" class="btn btn-primary">View Product</a>
+                    </div>
                 </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     $('#relatedProductsContainer').html(productsHtml);
 }
