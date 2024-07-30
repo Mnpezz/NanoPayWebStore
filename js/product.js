@@ -35,7 +35,7 @@ function buildThumbNail(activeCart) {
 
 function buildCaro(activeCart) {
     const product = getProductById(products, activeCart.productId);
-    const isExclusive = product.type === 'exclusive';
+    const isExclusive = product.type === 'exclusive' || (product.type === 'lease' && product.exclusive);
     const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
 
     let imagesToShow = isExclusive && !isUnlocked ? product.images.slice(0, 1) : product.images;
