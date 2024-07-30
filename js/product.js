@@ -126,16 +126,16 @@ function updateLeasePrice() {
 
 function buildDetail(activeCart) {
     const product = getProductById(products, activeCart.productId);
-    const isExclusive = product.type === 'exclusive';
+    const isExclusive = product.type === 'exclusive' || (product.type === 'lease' && product.exclusive);
     const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
 
     elements.itemName.html(product.name);
     elements.itemDescription.html(isUnlocked ? (product.fullDescription || product.description) : product.description);
 
     if (product.type === 'lease') {
-        elements.itemPrice.html(`$${product.basePrice.toFixed(2)} per day`);
+        elements.itemPrice.html(isUnlocked ? `$${product.basePrice.toFixed(2)} per day` : `$${product.basePrice.toFixed(2)} per day`);
     } else {
-        elements.itemPrice.html(`$${product.price.toFixed(2)}`);
+        elements.itemPrice.html(isUnlocked ? `$${product.price.toFixed(2)}` : `$${product.price.toFixed(2)}`);
     }
 
     if (isExclusive && !isUnlocked) {
@@ -166,7 +166,6 @@ function buildDetail(activeCart) {
     } else if (product.type === 'lease') {
         revealProduct(product, activeCart);
         buildLeaseSelector(product, activeCart);
-        // Hide quantity selector for lease products
         elements.qtyHolder.hide();
     } else {
         revealProduct(product, activeCart);
@@ -500,18 +499,15 @@ function revealProduct(product, activeCart) {
         $('.carousel').carousel();
     }
 
-    // Build colors, sizes, and quantity selector based on product type
-    if (product.type === 'regular' || (product.type === 'exclusive' && (product.colors || product.sizes))) {
+    if (product.type === 'lease') {
+        elements.itemPrice.html(`$${product.basePrice.toFixed(2)} per day`);
+        buildLeaseSelector(product, activeCart);
+        elements.qtyHolder.hide();
+    } else {
+        elements.itemPrice.html(`$${product.price.toFixed(2)}`);
         if (product.colors) buildColors(product, activeCart);
         if (product.sizes) buildSizes(product, activeCart);
         buildQuantity(activeCart);
-        elements.qtyHolder.show(); // Make sure quantity selector is visible for these types
-    } else if (product.type === 'appointment' || (product.type === 'exclusive' && product.availableDates)) {
-        buildAppointmentSelector(product, activeCart);
-        elements.qtyHolder.hide(); // Hide quantity selector for appointment types
-    } else if (product.type === 'lease') {
-        buildLeaseSelector(product, activeCart);
-        elements.qtyHolder.hide(); // Hide quantity selector for lease types
     }
 
     // Update the button
