@@ -8,42 +8,61 @@ This project is a web-based e-commerce platform with integrated Nano cryptocurre
 
 ## Features
 
-- Product catalog with customizable items
+- Product catalog with customizable items (regular, exclusive, appointment, and lease products)
 - Shopping cart with tax and discount functionality
 - Nano cryptocurrency payment integration
 - Premium content unlockable through micropayments
+- Wishlist functionality
+- Related products display
 
 ## Setup and Configuration
 
 To set up and customize this WebStore for your use, follow these steps:
 
-### 1. Cart Configuration (cart.js)
+### 1. NanoPay Configuration
 
-In `cart.js`, you need to modify the following:
+In `cart.js` function initiatePayment you need to modify the following:
 
-- **Tax Percentage**: Adjust the tax rate to match your requirements.
-- **Discount Codes**: Update or add discount codes as needed.
 - **Nano Payment Address**: In the `nanopay.open` function, change the XNO address to your own Nano wallet address.
 - **Contact Email**: Update the email address in the `nanopay.open`.
 
 Example:
 ```javascript
+nanopay.open({
+    address: '@nano_1youraddressa1b2c3d4e5f6g7h8i9j0',
+    notify: 'your@email.com',
+    contact: true, 
+    shipping: 10, //for free shipping 'true' and no shipping 'false'
+});
+```
+
+In `product.js` function buildDetail you need to modify the following:
+ - **Nano Payment Address**: In the `nanopay.wall` function, change the XNO address to your own Nano wallet address for exclusive item unlock payments.
+
+Example:
+```javascript
+NanoPay.wall({
+    address: '@nano_1youraddressa1b2c3d4e5f6g7h8i9j0',
+});
+```
+
+### 2. Product Catalog (main.js)
+
+- **unlockPrice**: The price to unlock all exclusive items.
+- **Tax Percentage**: Adjust the tax rate to match your requirements.
+- **Discount Codes**: Update or add discount codes as needed.
+
+Example:
+```javascript
+let unlockPrice = 1.33; // Price is denominated in xno
+
 const TAX_RATE = 0.08; // 8% tax
 
 const DISCOUNT_CODES = {
     'SUMMER10': 0.1,
     'WELCOME20': 0.2
 };
-
-nanopay.open({
-    address: '@nano_1youraddressa1b2c3d4e5f6g7h8i9j0',
-    notify: 'your@email.com',
-    contact: true, 
-    shipping: 10,
-});
 ```
-
-### 2. Product Catalog (main.js)
 
 In `main.js`, starting from line 58, you should modify the product items to reflect your inventory.
 
@@ -180,7 +199,28 @@ Initial State: Before the product is unlocked, only the sample description and t
 Unlocking: After the payment, the full description and all images (unblurred) are shown.
 Blurred Effect: Use CSS to blur the initial image to give a preview without revealing the full content in the index.html and the product.html.
 
+2.4. Lease Items
+Lease items are products that can be rented for a specified duration. They have the following additional attributes:
 
+type: Set to 'lease'
+basePrice: The price per day for leasing the item
+minDays: Minimum number of days the item can be leased
+maxDays: Maximum number of days the item can be leased
+
+Example of a lease item:
+```javascript
+{
+    id: 6,
+    type: 'lease',
+    name: "Premium Camera",
+    description: "High-end camera available for rent",
+    basePrice: 25.00,
+    minDays: 1,
+    maxDays: 30,
+    images: ['url_to_camera_image.jpg'],
+    exclusive: false // Set to true if this is an exclusive lease item
+}
+```
 ### 3. Paid Blog Configuration
 
 For each paid blog post or premium content page, update the Nano address and price in the NanoPay.wall configuration:
@@ -198,8 +238,26 @@ NanoPay.wall({
 })
 ```
 
-## Installation
+Additional Features
+Wishlist
+The WebStore includes a wishlist feature. Users can add products to their wishlist, which is stored in the browser's local storage.
 
-1. Clone this repository to your local machine or server.
-2. Make the necessary configurations as described above.
-3. Deploy the files to your web server.
+Related Products
+On the product page, related products are displayed to encourage additional purchases.
+
+Reviews
+A mock review system is implemented to showcase product feedback.
+
+
+Installation
+
+Clone this repository to your local machine or server.
+Make the necessary configurations as described above.
+Deploy the files to your web server.
+
+Notes
+
+Ensure all image URLs in the product configurations are correct and accessible.
+The WebStore uses local storage for cart and wishlist functionality. Ensure your users' browsers support local storage.
+For exclusive items, remember to provide both blurred and unblurred images as needed.
+When testing payments, use small amounts of Nano to avoid unnecessary expenses.
