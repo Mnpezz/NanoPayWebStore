@@ -297,6 +297,14 @@ function changeActiveImage(index) {
 
 function addToCart(e) {
     const product = getProductById(products, activeCart.productId);
+    const isExclusive = product.type === 'exclusive' || (product.type === 'lease' && product.exclusive);
+    const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
+
+    if (isExclusive && !isUnlocked) {
+        showTooltip(elements.addToCartBtn, "Unlock this item first!");
+        e.preventDefault();
+        return;
+    }
 
     if (product.type === 'lease') {
         if (!activeCart.leaseStartDate || !activeCart.leaseEndDate) {
