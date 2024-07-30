@@ -5,6 +5,7 @@ function buildProductCols(products = []) {
         const productUrl = `product.html?id=${prod.id}`;
         const productImage = prod.images[0];
         let productPrice;
+        
         if (prod.type === 'lease') {
             productPrice = `$${prod.basePrice.toFixed(2)} per day`;
         } else {
@@ -13,12 +14,12 @@ function buildProductCols(products = []) {
 
         str += `
             <div class="col-sm-6 col-md-3 mb-4">
-                <div class="product-item ${prod.type === 'exclusive' ? 'exclusive-product' : ''}" data-product-id="${prod.id}">
+                <div class="product-item ${prod.exclusive ? 'exclusive-product' : ''}" data-product-id="${prod.id}">
                     <a href="${productUrl}" class="product-link">
-                        <img src="${productImage}" alt="" class="img-fluid rounded-lg product-image mb-2 ${prod.type === 'exclusive' && !allExclusiveUnlocked ? 'blurred' : ''}">
+                        <img src="${productImage}" alt="" class="img-fluid rounded-lg product-image mb-2 ${prod.exclusive && !allExclusiveUnlocked ? 'blurred' : ''}">
                         <p class="text-center product-price">${productPrice}</p>
                         <p class="text-center product-name">${prod.name}</p>
-                        ${prod.type === 'exclusive' ? `<span class="exclusive-badge">${allExclusiveUnlocked ? 'Exclusive!' : 'Exclusive'}</span>` : ''}
+                        ${prod.exclusive ? `<span class="exclusive-badge">${allExclusiveUnlocked ? 'Exclusive!' : 'Exclusive'}</span>` : ''}
                     </a>
                 </div>
             </div>
