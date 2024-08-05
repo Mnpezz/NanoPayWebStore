@@ -78,6 +78,7 @@ function buildLeaseSelector(product, activeCart) {
 
     // Initialize Flatpickr for both start and end dates
     flatpickr("#leaseStartDate", {
+        enable: product.availableDates,
         minDate: "today",
         onChange: function(selectedDates, dateStr) {
             updateLeaseStartDate(dateStr);
@@ -86,6 +87,7 @@ function buildLeaseSelector(product, activeCart) {
     });
 
     flatpickr("#leaseEndDate", {
+        enable: product.availableDates,
         minDate: "today",
         onChange: function(selectedDates, dateStr) {
             updateLeaseEndDate(dateStr);
@@ -107,21 +109,33 @@ function updateLeasePrice() {
     if (activeCart.leaseStartDate && activeCart.leaseEndDate) {
         const start = new Date(activeCart.leaseStartDate);
         const end = new Date(activeCart.leaseEndDate);
-        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-        const totalPrice = product.basePrice * days;
-        activeCart.leaseDays = days; // Store the number of days
+        const availableDays = calculateAvailableDays(start, end, product.availableDates);
+        const totalPrice = product.basePrice * availableDays;
+        activeCart.leaseDays = availableDays;
         
-        if (days >= product.minDays && days <= product.maxDays) {
-            elements.itemPrice.html(`$${totalPrice.toFixed(2)} for ${days} days`);
+        if (availableDays >= product.minDays && availableDays <= product.maxDays) {
+            elements.itemPrice.html(`$${totalPrice.toFixed(2)} for ${availableDays} available days`);
             elements.addToCartBtn.prop('disabled', false);
         } else {
-            elements.itemPrice.html(`Please select between ${product.minDays} and ${product.maxDays} days`);
+            elements.itemPrice.html(`Please select between ${product.minDays} and ${product.maxDays} available days`);
             elements.addToCartBtn.prop('disabled', true);
         }
     } else {
         elements.itemPrice.html(`Select start and end dates`);
         elements.addToCartBtn.prop('disabled', true);
     }
+}
+
+function calculateAvailableDays(start, end, availableDates) {
+    let count = 0;
+    const current = new Date(start);
+    while (current <= end) {
+        if (availableDates.includes(current.toISOString().split('T')[0])) {
+            count++;
+        }
+        current.setDate(current.getDate() + 1);
+    }
+    return count;
 }
 
 function buildDetail(activeCart) {
@@ -133,8 +147,15 @@ function buildDetail(activeCart) {
 
     if (product.type === 'lease') {
         elements.itemPrice.html(isUnlocked || !product.exclusive ? `$${product.basePrice.toFixed(2)} per day` : `$${product.basePrice.toFixed(2)} per day`);
+        buildLeaseSelector(product, activeCart);
+    } else if (product.type === 'appointment') {
+        elements.itemPrice.html(isUnlocked || !product.exclusive ? `$${product.price.toFixed(2)}` : `$${product.price.toFixed(2)}`);
+        buildAppointmentSelector(product, activeCart);
     } else {
         elements.itemPrice.html(isUnlocked || !product.exclusive ? `$${product.price.toFixed(2)}` : `$${product.price.toFixed(2)}`);
+        if (product.colors) buildColors(product, activeCart);
+        if (product.sizes) buildSizes(product, activeCart);
+        buildQuantity(activeCart);
     }
 
     if (product.exclusive && !isUnlocked) {
@@ -197,7 +218,7 @@ function buildAppointmentSelector(product, activeCart) {
     // Initialize Flatpickr
     flatpickr("#appointmentDate", {
         enable: product.availableDates,
-        dateFormat: "YYYY-MM-DD",
+        dateFormat: "Y-m-d",
         onChange: function(selectedDates, dateStr) {
             updateAppointmentDate(dateStr);
         }
@@ -289,7 +310,7 @@ function changeActiveImage(index) {
 
 function addToCart(e) {
     const product = getProductById(products, activeCart.productId);
-    const isExclusive = product.type === 'exclusive' || (product.type === 'lease' && product.exclusive);
+    const isExclusive = product.exclusive;
     const isUnlocked = sessionStorage.getItem(`unlocked_${product.id}`) === 'true';
 
     if (isExclusive && !isUnlocked) {
@@ -307,31 +328,34 @@ function addToCart(e) {
 
         const start = new Date(activeCart.leaseStartDate);
         const end = new Date(activeCart.leaseEndDate);
-        const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+        const availableDays = calculateAvailableDays(start, end, product.availableDates);
 
-        if (days < product.minDays || days > product.maxDays) {
-            showTooltip(elements.productColors, `Lease duration must be between ${product.minDays} and ${product.maxDays} days!`);
+        if (availableDays < product.minDays || availableDays > product.maxDays) {
+            showTooltip(elements.productColors, `Lease duration must be between ${product.minDays} and ${product.maxDays} available days!`);
             e.preventDefault();
             return;
         }
 
-        activeCart.leaseDays = days;
-    } else if (product.colors && activeCart.colorId === null) {
-        showTooltip(elements.productColors, "Select Color!");
-        e.preventDefault();
-        return;
-    }
+        activeCart.leaseDays = availableDays;
+    } else if (product.type === 'appointment') {
+        if (!activeCart.appointmentDate || !activeCart.appointmentTime) {
+            showTooltip(elements.productColors, "Select Date and Time!");
+            e.preventDefault();
+            return;
+        }
+    } else {
+        // Regular product checks
+        if (product.colors && activeCart.colorId === null) {
+            showTooltip(elements.productColors, "Select Color!");
+            e.preventDefault();
+            return;
+        }
 
-    if (product.sizes && activeCart.sizeId === null) {
-        showTooltip(elements.productSizes, "Select Size!");
-        e.preventDefault();
-        return;
-    }
-
-    if (product.availableDates && (!activeCart.appointmentDate || !activeCart.appointmentTime)) {
-        showTooltip(elements.productColors, "Select Date and Time!");
-        e.preventDefault();
-        return;
+        if (product.sizes && activeCart.sizeId === null) {
+            showTooltip(elements.productSizes, "Select Size!");
+            e.preventDefault();
+            return;
+        }
     }
 
     // Create a new cart item
