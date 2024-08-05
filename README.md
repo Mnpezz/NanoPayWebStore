@@ -148,12 +148,35 @@ Example of a consulting item:
 
 When adding or modifying products in `main.js`, ensure that you provide all the necessary attributes for each product type. This structure allows for flexible product configurations while maintaining consistency across the store.
 
+### 2.3. Lease Items
+Lease items are products available for short-term rental. They have the following unique attributes:
 
-### 2.3. Exclusive Items
+type: 'lease'
+basePrice: The daily rental price
+minDays: Minimum rental period
+maxDays: Maximum rental period
+
+Example of a lease item:
+javascriptCopy{
+    id: ++prodIds,
+    type: 'lease',
+    name: "Short-term Rental Item",
+    fullDescription: "Enjoy our premium short-term rental item for your desired period.",
+    basePrice: 0.02, // Price per day
+    minDays: 3,
+    maxDays: 60,
+    images: [
+        'image1.jpg',
+        'image2.jpg'
+    ],
+    exclusive: false, // Can be true for exclusive lease items
+}
+
+### 2.4. Exclusive Items
 Exclusive items represent products or special offers that are only fully accessible after a payment has been made. They have additional handling for unlocking content and displaying it securely. The following attributes define an exclusive item:
 
 id: Unique identifier for the product
-type: Set to 'regular' for these items (exclusive is handled as a boolean flag)
+type: Set to 'regular', 'appointment', or 'lease' type (exclusive is handled as a boolean flag)
 name: The product name
 description: A sample description shown before the product is unlocked
 fullDescription: The full detailed description shown after the product is unlocked
@@ -163,8 +186,9 @@ minQuantity: Minimum quantity that can be ordered (default: 1)
 maxQuantity: Maximum quantity that can be ordered
 exclusive: Set to true to mark the item as exclusive
 
-Example of an exclusive item:
+Example of an regular type exclusive item:
 ``` javascript
+{
     id: ++prodIds,
     type: 'regular',
     name: "Premium Photo Album",
@@ -220,15 +244,13 @@ NanoPay.wall({
 
 Additional Features
 Wishlist
-The WebStore includes a wishlist feature. Users can add products to their wishlist, which is stored in the browser's local storage.
-
+Users can add products to their wishlist, which is stored in the browser's local storage.
 Related Products
 On the product page, related products are displayed to encourage additional purchases.
-
 Reviews
 A mock review system is implemented to showcase product feedback.
-
-
+Exclusive Content Unlocking
+Users can unlock all exclusive content with a one-time payment, enhancing the shopping experience.
 Installation
 
 Clone this repository to your local machine or server.
@@ -241,3 +263,7 @@ Ensure all image URLs in the product configurations are correct and accessible.
 The WebStore uses local storage for cart and wishlist functionality. Ensure your users' browsers support local storage.
 For exclusive items, remember to provide both blurred and unblurred images as needed.
 When testing payments, use small amounts of Nano to avoid unnecessary expenses.
+The lease system allows for flexible rental periods within the specified min and max days.
+Appointment bookings are limited to available dates and times specified in the product configuration.
+
+For any additional customization or feature requests, please refer to the source code or contact the developer.
