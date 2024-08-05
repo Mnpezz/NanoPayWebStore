@@ -144,9 +144,6 @@ function changeParticularCartQuantity(index, amount, minQuantity, maxQuantity) {
 }
 
 function initiatePayment() {
-    const MAX_ITEMS = 2;  // Max number of items to display
-    const MAX_LENGTH = 500; // Max length of the text to display
-    
     let subTotal = calculateSubTotal();
     let discountedSubTotal = subTotal * (1 - appliedDiscount);
     let tax = calculateTax(discountedSubTotal);
@@ -154,7 +151,7 @@ function initiatePayment() {
 
     const cartItems = cart.map(item => {
         let prod = getProductById(products, item.productId);
-        let itemPrice, itemTotal, itemQuantity, itemDetails;
+        let itemPrice, itemTotal, itemQuantity;
         
         if (prod.type === 'lease') {
             itemPrice = parseFloat(prod.basePrice);
@@ -177,8 +174,8 @@ function initiatePayment() {
         
         return {
             name: `${prod.name}: ${itemQuantity} ${prod.type === 'lease' ? 'days' : ''} <br> ${itemDetails} <br>`,
-            quantity: 1,
-            price: itemTotal.toFixed(2)
+            quantity: 1, // Set to 1 as we're including the total price
+            price: itemTotal.toFixed(2) // Use the total price for the item
         };
     });
 
@@ -196,11 +193,8 @@ function initiatePayment() {
         price: tax.toFixed(2)
     });
     
-    let itemCount = cartItems.length;
-    let titleSummary = cartItems.slice(0, MAX_ITEMS).map(item => item.name).join('<br>');
-    if (itemCount > MAX_ITEMS || titleSummary.length > MAX_LENGTH) {
-        titleSummary += '<br>...and more items';
-    }
+    let itemCount = cart.length;
+    let titleSummary = cartItems.map(item => item.name).join('<br>');
     if (total <= 0) {
         alert("Cannot process a payment of $0 or less.");
         return;
@@ -209,7 +203,7 @@ function initiatePayment() {
     NanoPay.open({
         address: '@mnpezz',
         notify: 'mnpezz@gmail.com',
-        contact: false,
+        contact: true,
         shipping: false,
         currency: 'USD',
         line_items: cartItems,
