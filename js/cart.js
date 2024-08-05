@@ -6,13 +6,12 @@ let totalItemsInCart = $("#totalItemsInCart");
 let txtCoupon = $("#txtCoupon");
 let appliedDiscount = 0;
 let orderHistoryBody = $("#orderHistoryBody");
-// Add these global variables at the top of the file
 let wishlistBody = $("#wishlistBody");
 let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
 
 
 function reloadOrderTotal() {
-    let itemCount = cart.length;
+    let itemCount = cart.reduce((total, item) => total + item.quantity, 0);
     let itemWord = itemCount > 1 ? "Items" : "Item";
     totalItemsInCart.html(`${itemCount} ${itemWord}`);
     let subTotal = calculateSubTotal();
@@ -145,6 +144,9 @@ function changeParticularCartQuantity(index, amount, minQuantity, maxQuantity) {
 }
 
 function initiatePayment() {
+    const MAX_ITEMS = 2;  // Max number of items to display
+    const MAX_LENGTH = 500; // Max length of the text to display
+    
     let subTotal = calculateSubTotal();
     let discountedSubTotal = subTotal * (1 - appliedDiscount);
     let tax = calculateTax(discountedSubTotal);
@@ -152,7 +154,7 @@ function initiatePayment() {
 
     const cartItems = cart.map(item => {
         let prod = getProductById(products, item.productId);
-        let itemPrice, itemTotal, itemQuantity;
+        let itemPrice, itemTotal, itemQuantity, itemDetails;
         
         if (prod.type === 'lease') {
             itemPrice = parseFloat(prod.basePrice);
@@ -161,8 +163,9 @@ function initiatePayment() {
             itemDetails = `Start Date: ${item.leaseStartDate}, End Date: ${item.leaseEndDate}, Duration: ${itemQuantity} days`;
         } else {
             itemPrice = parseFloat(prod.price);
-            itemTotal = itemPrice * item.quantity;
-
+            itemQuantity = item.quantity;
+            itemTotal = itemPrice * itemQuantity;
+    
             let selectedColor = prod.colors ? prod.colors.find(color => color.id === item.colorId) : null;
             let selectedSize = prod.sizes ? prod.sizes.find(size => size.id === item.sizeId) : null;
             itemDetails = `${selectedColor ? `Color: ${selectedColor.name}, ` : ''}${selectedSize ? `Size: ${selectedSize.name}` : ''}`;
@@ -174,28 +177,30 @@ function initiatePayment() {
         
         return {
             name: `${prod.name}: ${itemQuantity} ${prod.type === 'lease' ? 'days' : ''} <br> ${itemDetails} <br>`,
-            quantity: itemQuantity,
-            price: itemPrice.toFixed(2)
+            quantity: 1,
+            price: itemTotal.toFixed(2)
         };
     });
 
-    // Add discount and tax as separate line items
     if (appliedDiscount > 0) {
         cartItems.push({
-            name: `Discount: $${(-subTotal * appliedDiscount).toFixed(2)}`,
+            name: `Discount ${(-subTotal * appliedDiscount).toFixed(2)}`,
             quantity: 1,
             price: (-subTotal * appliedDiscount).toFixed(2)
         });
     }
-
+    
     cartItems.push({
-        name: `Tax: $${tax.toFixed(2)}`,
+        name: `Tax ${tax.toFixed(2)}`,
         quantity: 1,
         price: tax.toFixed(2)
     });
-
-    let itemCount = cart.length;
-    let titleSummary = cartItems.map(item => item.name).join('<br>');
+    
+    let itemCount = cartItems.length;
+    let titleSummary = cartItems.slice(0, MAX_ITEMS).map(item => item.name).join('<br>');
+    if (itemCount > MAX_ITEMS || titleSummary.length > MAX_LENGTH) {
+        titleSummary += '<br>...and more items';
+    }
     if (total <= 0) {
         alert("Cannot process a payment of $0 or less.");
         return;
