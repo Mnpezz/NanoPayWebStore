@@ -64,7 +64,7 @@ const DISCOUNT_CODES = {
 };
 ```
 
-In `main.js`, starting from line 58, you should modify the product items to reflect your inventory.
+In `main.js`, starting from line 60, you should modify the product items to reflect your inventory.
 
 ## Product Types and Item Details
 
@@ -146,8 +146,6 @@ Example of a consulting item:
 }
 ```
 
-When adding or modifying products in `main.js`, ensure that you provide all the necessary attributes for each product type. This structure allows for flexible product configurations while maintaining consistency across the store.
-
 ### 2.3. Lease Items
 Lease items are products available for short-term rental. They have the following unique attributes:
 
@@ -220,7 +218,7 @@ Key Points for Exclusive Items:
 
 Initial State: Before the product is unlocked, only the description and the first image (blurred) are shown.
 Unlocking: After the payment, the full description and all images (unblurred) are shown.
-Blurred Effect: CSS is used to blur the initial image, giving a preview without revealing the full content.
+Blurred Effect: CSS is used to blur the initial image, giving a preview without revealing the full content, but can easily be bypassed so be aware that the first image should be censured independently if desired.
 Unlock Price: The price to unlock exclusive items is set globally in main.js as unlockPrice.
 
 When adding or modifying exclusive products in main.js, ensure you provide all the necessary attributes. The structure handles the locking and unlocking mechanism, displaying the sample description and blurred image before the purchase, and the full content after the purchase.
