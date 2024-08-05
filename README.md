@@ -199,28 +199,58 @@ Initial State: Before the product is unlocked, only the sample description and t
 Unlocking: After the payment, the full description and all images (unblurred) are shown.
 Blurred Effect: Use CSS to blur the initial image to give a preview without revealing the full content in the index.html and the product.html.
 
-2.4. Lease Items
-Lease items are products that can be rented for a specified duration. They have the following additional attributes:
+### 2.3. Exclusive Items
+Exclusive items represent products or special offers that are only fully accessible after a payment has been made. They have additional handling for unlocking content and displaying it securely. The following attributes define an exclusive item:
 
-type: Set to 'lease'
-basePrice: The price per day for leasing the item
-minDays: Minimum number of days the item can be leased
-maxDays: Maximum number of days the item can be leased
+id: Unique identifier for the product
+type: Set to 'regular' for these items (exclusive is handled as a boolean flag)
+name: The product name
+description: A sample description shown before the product is unlocked
+fullDescription: The full detailed description shown after the product is unlocked
+price: The base price of the product
+images: An array of image URLs for the product
+minQuantity: Minimum quantity that can be ordered (default: 1)
+maxQuantity: Maximum quantity that can be ordered
+exclusive: Set to true to mark the item as exclusive
 
-Example of a lease item:
-```javascript
-{
-    id: 6,
-    type: 'lease',
-    name: "Premium Camera",
-    description: "High-end camera available for rent",
-    basePrice: 25.00,
-    minDays: 1,
-    maxDays: 30,
-    images: ['url_to_camera_image.jpg'],
-    exclusive: false // Set to true if this is an exclusive lease item
+Example of an exclusive item:
+``` javascript
+    id: ++prodIds,
+    type: 'regular',
+    name: "Premium Photo Album",
+    description: "A brief summary of the premium photos. Unlock to see more!",
+    fullDescription: "The complete content of the premium photo album, packed with stunning visuals and detailed descriptions of each photograph.",
+    price: 19.99,
+    minQuantity: 1,
+    maxQuantity: 1,
+    images: [
+        'https://example.com/blurred_cover_image.jpg',
+        'https://example.com/premium_photo1.jpg',
+        'https://example.com/premium_photo2.jpg'
+    ],
+    exclusive: true
 }
 ```
+
+Handling Exclusive Items in Code
+The first image (index 0) in the images array is displayed with a blur effect by default. The blur effect can be adjusted in the index.html for the front page and in product.html for the product view:
+
+```htmlCopy<style>
+.blurred {
+    filter: blur(5px);
+}
+</style>
+```
+
+Key Points for Exclusive Items:
+
+Initial State: Before the product is unlocked, only the description and the first image (blurred) are shown.
+Unlocking: After the payment, the full description and all images (unblurred) are shown.
+Blurred Effect: CSS is used to blur the initial image, giving a preview without revealing the full content.
+Unlock Price: The price to unlock exclusive items is set globally in main.js as unlockPrice.
+
+When adding or modifying exclusive products in main.js, ensure you provide all the necessary attributes. The structure handles the locking and unlocking mechanism, displaying the sample description and blurred image before the purchase, and the full content after the purchase.
+
 ### 3. Paid Blog Configuration
 
 For each paid blog post or premium content page, update the Nano address and price in the NanoPay.wall configuration:
