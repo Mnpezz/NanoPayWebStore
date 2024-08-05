@@ -150,56 +150,6 @@ When adding or modifying products in `main.js`, ensure that you provide all the 
 
 
 ### 2.3. Exclusive Items
-
-Exclusive items represent products or special offers that are only accessible after a payment has been made. They have additional handling for unlocking content and displaying it securely. The following attributes define an exclusive item:
-
-- 'id': Unique identifier for the product
-- type': Set to 'exclusive' for these items
-- name': The product name
-- 'description': A sample description shown before the product is unlocked
-- 'fullDescription': The full detailed description shown after the product is unlocked
-- 'price': The base price of the product
-- 'images': An array of image URLs for the product
-- 'minQuantity': Minimum quantity that can be ordered (default: 1)
-- 'maxQuantity': Maximum quantity that can be ordered
-- 'unlockPrice': The price it will cost to unlock additional photos, reveal alternative description, and the ability to add the product to your cart.
-
-Example of an exclusive item:
-```javascript
-{
-                id: ++prodIds,
-                type: 'exclusive',
-                "name": "Premium Photo Album",
-                "description": "A brief summary of the many premium photos.",
-                "fullDescription": "The complete content of the premium content, packed with wonders and detailed visuals.",
-                "price": 19.99,
-                minQuantity: 1,
-                maxQuantity: 1,
-                images: ["blurred_url_to_cover_image.jpg", "url_to_additional_image1.jpg", "url_to_additional_image2.jpg"],
-                unlockPrice: 0.01
-            }
-```
-
-Handling Exclusive Items in Code
-
-the default photo has a blur effect placed over it by default. it can be adjusted in the index.html for front page blur and the product.html for the product view:
-
-``` javascript
-<style>
-.blurred {
-    filter: blur(5px);
-}
-</style>
-```
-
-When adding or modifying exclusive products in main.js, ensure you provide all the necessary attributes. The structure should handle the locking and unlocking mechanism, displaying the sample description and images before the purchase and the full content after the purchase.
-
-Key Points for Exclusive Items
-Initial State: Before the product is unlocked, only the sample description and the first image (blurred by default) are shown.
-Unlocking: After the payment, the full description and all images (unblurred) are shown.
-Blurred Effect: Use CSS to blur the initial image to give a preview without revealing the full content in the index.html and the product.html.
-
-### 2.3. Exclusive Items
 Exclusive items represent products or special offers that are only fully accessible after a payment has been made. They have additional handling for unlocking content and displaying it securely. The following attributes define an exclusive item:
 
 id: Unique identifier for the product
